@@ -1,0 +1,16 @@
+{
+  "username": "Smapifan",
+  "title": "Smapifan's Mods",
+  "description": "Creative mod developer",
+  "nexus": {
+    "enabled": true,
+    "username": "Smapifan",
+    "mods": []
+  },
+  "curseforge": {
+    "enabled": true,
+    "username": "Smapifan",
+    "mods": []
+  },
+  "lastUpdated": "2026-03-06T00:00:00Z"
+}

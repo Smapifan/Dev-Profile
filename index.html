@@ -505,6 +505,138 @@
     }
     .success-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
+    /* ── Platform link fields ──────────────────────────────────── */
+    .platform-fields { display: flex; flex-direction: column; gap: 8px; }
+    .platform-field {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color var(--transition);
+      overflow: hidden;
+    }
+    .platform-field:focus-within { border-color: var(--accent); }
+    .platform-field-icon {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--tag-bg);
+      border-right: 1px solid var(--border);
+    }
+    .platform-field-icon img { width: 16px; height: 16px; object-fit: contain; }
+    .platform-field input {
+      flex: 1;
+      border: none !important;
+      background: transparent !important;
+      color: var(--text);
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+    }
+    .platform-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-bottom: 4px;
+    }
+    .extra-link-row { display: flex; align-items: flex-start; gap: 8px; }
+    .extra-link-row .platform-field { flex: 1; }
+    .btn-remove-link {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0 10px;
+      height: 38px;
+      font-size: 1rem;
+      line-height: 1;
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+      flex-shrink: 0;
+    }
+    .btn-remove-link:hover { color: var(--red); border-color: var(--red); background: var(--card-hover); }
+    .btn-add-link {
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--accent);
+      cursor: pointer;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      transition: all var(--transition);
+      width: 100%;
+      text-align: center;
+      font-family: inherit;
+    }
+    .btn-add-link:hover { background: var(--accent-dim); border-style: solid; }
+
+    /* ── PR trigger card ────────────────────────────────────────── */
+    .pr-trigger {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: left;
+    }
+    .pr-trigger h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .pr-trigger p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      text-align: left !important;
+      max-width: 100% !important;
+    }
+    .pr-trigger-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+    .pr-trigger input {
+      flex: 1;
+      min-width: 0;
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .pr-trigger input:focus { border-color: var(--accent); }
+    .pr-status { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; min-height: 1.1em; }
+    .pr-status.success { color: var(--green); }
+    .pr-status.error   { color: var(--red); }
+
+    /* ── Social badges on profile cards ─────────────────────────── */
+    .card-socials { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .social-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      transition: background var(--transition);
+    }
+    .social-badge:hover { background: var(--accent-dim); }
+    .social-badge img { width: 12px; height: 12px; object-fit: contain; }
+
     /* ── Footer ─────────────────────────────────────────────────── */
     footer {
       text-align: center;
@@ -668,10 +800,55 @@
                  placeholder="JavaScript, Modding, Python" />
         </div>
         <div class="form-group">
-          <label for="f-socials"><span data-i18n="create.field_socials">Social Links (one per line)</span></label>
-          <textarea id="f-socials" rows="3"
-                    data-i18n-placeholder="create.field_socials_placeholder"
-                    placeholder="https://github.com/yourname"></textarea>
+          <label><span data-i18n="create.section_platforms">Platform Links</span></label>
+          <div class="platform-fields">
+            <!-- GitHub -->
+            <div>
+              <div class="platform-label" data-i18n="create.field_github">GitHub Profile</div>
+              <div class="platform-field">
+                <span class="platform-field-icon">
+                  <img src="https://cdn.simpleicons.org/github/8b949e" alt="GitHub" loading="lazy" />
+                </span>
+                <input type="url" id="f-github"
+                       data-i18n-placeholder="create.field_github_placeholder"
+                       placeholder="https://github.com/username"
+                       autocomplete="off" inputmode="url" />
+              </div>
+              <span class="form-error" id="err-github"></span>
+            </div>
+            <!-- Nexus Mods -->
+            <div>
+              <div class="platform-label" data-i18n="create.field_nexusmods">Nexus Mods Profile</div>
+              <div class="platform-field">
+                <span class="platform-field-icon">
+                  <img src="https://cdn.simpleicons.org/nexusmods/d98f40" alt="Nexus Mods" loading="lazy" />
+                </span>
+                <input type="url" id="f-nexusmods"
+                       data-i18n-placeholder="create.field_nexusmods_placeholder"
+                       placeholder="https://www.nexusmods.com/users/123456"
+                       autocomplete="off" inputmode="url" />
+              </div>
+              <span class="form-error" id="err-nexusmods"></span>
+            </div>
+            <!-- CurseForge -->
+            <div>
+              <div class="platform-label" data-i18n="create.field_curseforge">CurseForge Profile</div>
+              <div class="platform-field">
+                <span class="platform-field-icon">
+                  <img src="https://cdn.simpleicons.org/curseforge/F16436" alt="CurseForge" loading="lazy" />
+                </span>
+                <input type="url" id="f-curseforge"
+                       data-i18n-placeholder="create.field_curseforge_placeholder"
+                       placeholder="https://www.curseforge.com/members/username"
+                       autocomplete="off" inputmode="url" />
+              </div>
+              <span class="form-error" id="err-curseforge"></span>
+            </div>
+            <!-- Extra links -->
+            <div id="extra-links"></div>
+            <button type="button" class="btn-add-link" onclick="addExtraLink()"
+                    data-i18n="create.add_link">+ Add Link</button>
+          </div>
         </div>
         <div class="form-group">
           <label for="f-language"><span data-i18n="create.field_language">Preferred Language</span></label>
@@ -703,6 +880,19 @@
         <button class="btn btn-primary" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
         <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
       </div>
+      <div class="pr-trigger">
+        <h4 data-i18n="create.submit_pr_title">Auto-create Pull Request</h4>
+        <p data-i18n="create.submit_pat_hint">Provide a GitHub Personal Access Token to automatically create a branch and open a PR. Your token is not stored anywhere.</p>
+        <div class="pr-trigger-row">
+          <input type="password" id="pat-input"
+                 data-i18n-placeholder="create.submit_pat_placeholder"
+                 placeholder="ghp_…"
+                 autocomplete="off" spellcheck="false" />
+          <button class="btn btn-primary" onclick="triggerWorkflow()" id="btn-pr"
+                  data-i18n="create.submit_pr_btn">Create Branch &amp; Open PR</button>
+        </div>
+        <div class="pr-status" id="pr-status" role="status" aria-live="polite"></div>
+      </div>
       <p class="form-hint" data-i18n="create.pr_instructions">Open a Pull Request with your YAML files to publish your profile.</p>
     </div>
   </div>
@@ -714,7 +904,6 @@
 const SUPPORTED_LANGS = ['en','de','es','fr','it','jp','cn'];
 const LANG_NAMES      = { en:'English', de:'Deutsch', es:'Español', fr:'Français', it:'Italiano', jp:'日本語', cn:'中文' };
 
-/* Built-in English fallback — used when YAML loading fails */
 /* No built-in fallback — missing translations show the i18n key so gaps are immediately visible */
 const I18N_FALLBACK = {};
 
@@ -722,6 +911,164 @@ let i18n     = {};
 let allProfiles   = [];
 let generatedKey  = null;
 let generatedData = null;
+
+/* ── Platform definitions ───────────────────────────────────────────── */
+const PLATFORMS = {
+  github:     { label: 'GitHub',     icon: 'github',     color: '8b949e', pattern: /^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/ },
+  nexusmods:  { label: 'Nexus Mods', icon: 'nexusmods',  color: 'd98f40', pattern: /^https?:\/\/(www\.)?nexusmods\.com\/users\/\d+/ },
+  curseforge: { label: 'CurseForge', icon: 'curseforge', color: 'F16436', pattern: /^https?:\/\/(www\.)?curseforge\.com\/members\/[a-zA-Z0-9_-]+/ },
+  twitter:    { label: 'Twitter/X',  icon: 'x',          color: '1DA1F2', pattern: null },
+  discord:    { label: 'Discord',    icon: 'discord',     color: '5865F2', pattern: null },
+  youtube:    { label: 'YouTube',    icon: 'youtube',     color: 'FF0000', pattern: null },
+  twitch:     { label: 'Twitch',     icon: 'twitch',      color: '9146FF', pattern: null },
+  link:       { label: 'Link',       icon: null,          color: '8b949e', pattern: null },
+};
+
+function detectPlatform(url) {
+  if (!url) return 'link';
+  const u = url.toLowerCase();
+  if (/github\.com/i.test(u)) return 'github';
+  if (/nexusmods\.com/i.test(u)) return 'nexusmods';
+  if (/curseforge\.com/i.test(u)) return 'curseforge';
+  if (/twitter\.com|x\.com/i.test(u)) return 'twitter';
+  if (/discord\.gg|discord\.com/i.test(u)) return 'discord';
+  if (/youtube\.com|youtu\.be/i.test(u)) return 'youtube';
+  if (/twitch\.tv/i.test(u)) return 'twitch';
+  return 'link';
+}
+
+function platformIconSrc(type) {
+  const p = PLATFORMS[type] || PLATFORMS.link;
+  if (!p.icon) return null;
+  return `https://cdn.simpleicons.org/${p.icon}/${p.color}`;
+}
+
+/* ── Extra links management ─────────────────────────────────────────── */
+let extraLinkIds = [];
+
+function addExtraLink() {
+  const id = Date.now();
+  extraLinkIds.push(id);
+  const container = document.getElementById('extra-links');
+  const row = document.createElement('div');
+  row.className = 'extra-link-row';
+  row.id = `extra-row-${id}`;
+  row.innerHTML = `
+    <div class="platform-field">
+      <span class="platform-field-icon" id="extra-icon-${id}">
+        <img src="https://cdn.simpleicons.org/link/8b949e" alt="Link" width="16" height="16" loading="lazy" />
+      </span>
+      <input type="url" id="f-extra-${id}"
+             data-i18n-placeholder="create.field_link_placeholder"
+             placeholder="https://example.com/yourprofile"
+             oninput="updateExtraIcon(${id})"
+             autocomplete="off" inputmode="url" />
+    </div>
+    <button type="button" class="btn-remove-link" onclick="removeExtraLink(${id})"
+            aria-label="Remove" title="Remove">✕</button>`;
+  container.appendChild(row);
+  document.getElementById(`f-extra-${id}`).focus();
+  /* apply current i18n to new elements */
+  row.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+  row.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-placeholder')); });
+}
+
+function removeExtraLink(id) {
+  extraLinkIds = extraLinkIds.filter(i => i !== id);
+  const row = document.getElementById(`extra-row-${id}`);
+  if (row) row.remove();
+}
+
+function updateExtraIcon(id) {
+  const input = document.getElementById(`f-extra-${id}`);
+  if (!input) return;
+  const type = detectPlatform(input.value);
+  const iconContainer = document.getElementById(`extra-icon-${id}`);
+  if (!iconContainer) return;
+  const src = platformIconSrc(type) || `https://cdn.simpleicons.org/link/8b949e`;
+  const img = iconContainer.querySelector('img');
+  if (img) img.src = src;
+}
+
+/* ── URL validation helpers ─────────────────────────────────────────── */
+function isValidUrl(url) {
+  try { return /^https?:\/\//i.test(url) && Boolean(new URL(url)); } catch { return false; }
+}
+function isValidGitHubProfile(url) {
+  return PLATFORMS.github.pattern.test(url);
+}
+function isValidNexusModsProfile(url) {
+  return PLATFORMS.nexusmods.pattern.test(url);
+}
+function isValidCurseForgeProfile(url) {
+  return PLATFORMS.curseforge.pattern.test(url);
+}
+
+/* ── Trigger Workflow via GitHub Dispatch API ───────────────────────── */
+async function triggerWorkflow() {
+  const pat = (document.getElementById('pat-input').value || '').trim();
+  const statusEl = document.getElementById('pr-status');
+  const btn = document.getElementById('btn-pr');
+
+  statusEl.className = 'pr-status';
+  statusEl.textContent = '';
+
+  if (!pat) {
+    statusEl.className = 'pr-status error';
+    statusEl.textContent = t('create.submit_pr_error') || 'Please provide a GitHub token.';
+    return;
+  }
+  if (!generatedData) {
+    statusEl.className = 'pr-status error';
+    statusEl.textContent = t('create.submit_pr_error') || 'No profile data. Please fill in the form first.';
+    return;
+  }
+
+  btn.disabled = true;
+  statusEl.className = 'pr-status';
+  statusEl.textContent = t('create.submit_pr_working') || 'Creating PR…';
+
+  try {
+    const inputs = {
+      username:  generatedData.username,
+      name:      generatedData.name,
+      bio:       generatedData.bio || '',
+      skills:    (generatedData.skills || []).join(','),
+      socials:   JSON.stringify(generatedData.socials || []),
+      language:  generatedData.language || 'en',
+      key_hash:  generatedData.key_hash || '',
+    };
+
+    const resp = await fetch(
+      'https://api.github.com/repos/Smapifan/Dev-Profile/actions/workflows/profile-pr.yml/dispatches',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${pat}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ref: 'main', inputs }),
+      }
+    );
+
+    if (resp.status === 204) {
+      statusEl.className = 'pr-status success';
+      statusEl.textContent = t('create.submit_pr_success') || '✅ Workflow triggered! A PR will be opened shortly.';
+      /* Keep the button disabled after success to prevent duplicate PR creation */
+      btn.textContent = t('create.submit_pr_success') || '✅ PR triggered!';
+    } else {
+      statusEl.className = 'pr-status error';
+      statusEl.textContent = `${t('create.submit_pr_error') || 'Error'} (HTTP ${resp.status})`;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    statusEl.className = 'pr-status error';
+    statusEl.textContent = `${t('create.submit_pr_error') || 'Error'}: ${err.message}`;
+    btn.disabled = false;
+  }
+}
 
 /* ── i18n ──────────────────────────────────────────────────────────── */
 function currentLang() {
@@ -886,6 +1233,20 @@ function renderProfiles(profiles) {
     const skills   = (p.skills || []).slice(0, 5);
     const bio      = p.bio || '';
     const date     = p.created_at ? new Date(p.created_at).toLocaleDateString(i18n.lang || 'en') : '';
+    const rawSocials = (p.socials || []).slice(0, 4);
+
+    /* Render social badges — support both {type,url} objects and legacy plain strings */
+    const socialBadgesHtml = rawSocials.length ? `<div class="card-socials">${rawSocials.map(s => {
+      const type  = typeof s === 'string' ? detectPlatform(s) : (s.type || detectPlatform(s.url || ''));
+      const url   = typeof s === 'string' ? s : (s.url || '');
+      const plat  = PLATFORMS[type] || PLATFORMS.link;
+      const label = plat.label || type;
+      const iconSrc = platformIconSrc(type) || `https://cdn.simpleicons.org/link/8b949e`;
+      return `<a class="social-badge" href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="${esc(label)}" onclick="event.stopPropagation()">
+        <img src="${iconSrc}" alt="${esc(label)}" loading="lazy" />
+        <span>${esc(label)}</span>
+      </a>`;
+    }).join('')}</div>` : '';
 
     return `<a class="profile-card" href="profiles/${esc(username)}/index.html" title="${esc(name)}">
       <div class="card-top">
@@ -897,6 +1258,7 @@ function renderProfiles(profiles) {
       </div>
       ${bio ? `<div class="card-bio">${esc(bio)}</div>` : ''}
       ${skills.length ? `<div class="tags">${skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>` : ''}
+      ${socialBadgesHtml}
       <div class="card-footer">
         <span>${date ? `${esc(t('profile.last_updated').replace('{{date}}', date))}` : ''}</span>
         <span class="card-footer-link">${esc(t('nav.profiles') || 'View')} →</span>
@@ -915,6 +1277,23 @@ function openCreateModal() {
   document.getElementById('form-step').style.display = '';
   document.getElementById('success-step').classList.remove('open');
   clearErrors();
+  /* reset platform fields */
+  ['f-github','f-nexusmods','f-curseforge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  /* remove any extra link rows */
+  extraLinkIds = [];
+  const extraContainer = document.getElementById('extra-links');
+  if (extraContainer) extraContainer.innerHTML = '';
+  /* reset PR trigger */
+  const patInput = document.getElementById('pat-input');
+  if (patInput) patInput.value = '';
+  const prStatus = document.getElementById('pr-status');
+  if (prStatus) { prStatus.textContent = ''; prStatus.className = 'pr-status'; }
+  const btnPr = document.getElementById('btn-pr');
+  if (btnPr) { btnPr.disabled = false; btnPr.textContent = t('create.submit_pr_btn') || 'Create Branch & Open PR'; }
+  generatedKey = null; generatedData = null;
   document.getElementById('f-username').focus();
 }
 
@@ -953,7 +1332,20 @@ async function handleCreate() {
   const name     = sanitize(document.getElementById('f-name').value, 120);
   const bio      = sanitize(document.getElementById('f-bio').value, 500);
   const skills   = document.getElementById('f-skills').value.split(',').map(s => sanitize(s, 60)).filter(Boolean).slice(0, 20);
-  const socials  = document.getElementById('f-socials').value.split('\n').map(s => sanitize(s, 200)).filter(Boolean).slice(0, 10);
+
+  /* Collect structured platform links */
+  const githubUrl     = sanitize(document.getElementById('f-github').value, 200);
+  const nexusmodsUrl  = sanitize(document.getElementById('f-nexusmods').value, 200);
+  const curseforgeUrl = sanitize(document.getElementById('f-curseforge').value, 200);
+  const socials = [];
+  if (githubUrl)     socials.push({ type: 'github',     url: githubUrl });
+  if (nexusmodsUrl)  socials.push({ type: 'nexusmods',  url: nexusmodsUrl });
+  if (curseforgeUrl) socials.push({ type: 'curseforge', url: curseforgeUrl });
+  for (const id of extraLinkIds) {
+    const val = sanitize((document.getElementById(`f-extra-${id}`) || {}).value || '', 200);
+    if (val) socials.push({ type: detectPlatform(val), url: val });
+  }
+
   /* language must be in the supported list */
   const rawLang  = document.getElementById('f-language').value;
   const language = SUPPORTED_LANGS.includes(rawLang) ? rawLang : 'en';
@@ -962,6 +1354,14 @@ async function handleCreate() {
   if (!username) { showError('err-username', t('create.error_required')); valid = false; }
   else if (!/^[a-zA-Z0-9_-]{1,40}$/.test(username)) { showError('err-username', t('create.error_username_invalid')); valid = false; }
   if (!name) { showError('err-name', t('create.error_required')); valid = false; }
+
+  /* Validate platform URLs using a shared helper */
+  function checkPlatformUrl(url, validator, errId, errKey) {
+    if (url && !validator(url)) { showError(errId, t(errKey)); valid = false; }
+  }
+  checkPlatformUrl(githubUrl,     isValidGitHubProfile,     'err-github',     'create.error_github_url');
+  checkPlatformUrl(nexusmodsUrl,  isValidNexusModsProfile,  'err-nexusmods',  'create.error_nexusmods_url');
+  checkPlatformUrl(curseforgeUrl, isValidCurseForgeProfile, 'err-curseforge', 'create.error_curseforge_url');
   if (!valid) return;
 
   const taken = allProfiles.map(p => (p.username || '').toLowerCase());

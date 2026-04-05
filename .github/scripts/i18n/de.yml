@@ -10,6 +10,10 @@ nav:
 
 home:
   title: Dev-Profile
+  badge: Open Source
+  headline_1: Entdecke
+  headline_2: Entwickler
+  headline_3: Profile
   subtitle: Eine Plattform für Entwickler, um ihre Mods und Projekte zu präsentieren
   all_profiles: Alle Profile
   no_profiles: Noch keine Profile vorhanden.
@@ -66,6 +70,28 @@ create:
   error_required: Dieses Feld ist erforderlich.
   download_yaml: Profil-YAML herunterladen
   pr_instructions: "Um dein Profil hinzuzufügen, öffne einen Pull Request mit den generierten YAML-Dateien."
+  section_platforms: Plattform-Links
+  field_github: GitHub-Profil
+  field_github_placeholder: "https://github.com/username"
+  field_nexusmods: Nexus Mods Profil
+  field_nexusmods_placeholder: "https://www.nexusmods.com/users/123456"
+  field_curseforge: CurseForge Profil
+  field_curseforge_placeholder: "https://www.curseforge.com/members/username"
+  field_link_placeholder: "https://example.com/deinprofil"
+  add_link: "+ Link hinzufügen"
+  remove_link: Entfernen
+  submit_pr_title: Pull Request automatisch erstellen
+  submit_pat_label: "GitHub Token (repo + workflow Berechtigung)"
+  submit_pat_placeholder: "ghp_…"
+  submit_pat_hint: "Gib ein GitHub Personal Access Token an, um automatisch einen Branch zu erstellen und einen PR zu öffnen. Dein Token wird nirgendwo gespeichert."
+  submit_pr_btn: "Branch erstellen & PR öffnen"
+  submit_pr_working: "PR wird erstellt…"
+  submit_pr_success: "✅ Workflow gestartet! Ein PR wird in Kürze geöffnet."
+  submit_pr_error: "PR konnte nicht erstellt werden. Prüfe deinen Token und versuche es erneut."
+  error_invalid_url: "Bitte gib eine gültige URL ein (muss mit https:// beginnen)."
+  error_github_url: "Gib eine gültige GitHub-Profil-URL ein (z. B. https://github.com/username)"
+  error_nexusmods_url: "Gib eine gültige Nexus Mods Profil-URL ein (z. B. https://www.nexusmods.com/users/12345)"
+  error_curseforge_url: "Gib eine gültige CurseForge Profil-URL ein (z. B. https://www.curseforge.com/members/username)"
 
 mods:
   title: Mods
@@ -92,3 +118,6 @@ errors:
   not_found: Seite nicht gefunden.
   load_failed: Daten konnten nicht geladen werden.
   network: Netzwerkfehler. Bitte erneut versuchen.
+
+btn_cancel: Abbrechen
+btn_close: Schließen

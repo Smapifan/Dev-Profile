@@ -77,6 +77,36 @@ function validateUsername(username) {
   return /^[a-zA-Z0-9_-]{1,40}$/.test(username);
 }
 
+// ---------- Platform detection (mirrors client-side logic) ----------
+
+const VALID_PLATFORM_TYPES = new Set([
+  'github', 'nexusmods', 'curseforge', 'twitter', 'discord', 'youtube', 'twitch', 'link',
+]);
+
+function detectPlatformNode(url) {
+  if (!url) return 'link';
+  const u = url.toLowerCase();
+  if (/github\.com/.test(u)) return 'github';
+  if (/nexusmods\.com/.test(u)) return 'nexusmods';
+  if (/curseforge\.com/.test(u)) return 'curseforge';
+  if (/twitter\.com|x\.com/.test(u)) return 'twitter';
+  if (/discord\.gg|discord\.com/.test(u)) return 'discord';
+  if (/youtube\.com|youtu\.be/.test(u)) return 'youtube';
+  if (/twitch\.tv/.test(u)) return 'twitch';
+  return 'link';
+}
+
+/** Normalize a raw type string: must be in the allow-list, else auto-detect from URL. */
+function normalizePlatformType(rawType, url) {
+  const t = (rawType || '').toLowerCase().trim();
+  return VALID_PLATFORM_TYPES.has(t) ? t : detectPlatformNode(url);
+}
+
+/** Map a plain URL string to a {type, url} social entry. */
+function urlToSocialEntry(url) {
+  return { type: detectPlatformNode(url), url };
+}
+
 // ---------- Main ----------
 
 function main() {
@@ -104,8 +134,45 @@ function main() {
   fs.mkdirSync(path.join(profileDir, 'uploads'), { recursive: true });
 
   // Generate a one-time key (printed to workflow log, NOT stored in repo)
-  const key = generateKey(username);
-  const keyHash = hashKey(key);
+  // If --key-hash is provided (client-side generated), use that hash directly.
+  let key = null;
+  let keyHash;
+  if (opts['key-hash'] && /^[a-f0-9]{40,}$/i.test(opts['key-hash'])) {
+    keyHash = opts['key-hash'];
+    console.log('Using client-provided key hash (key was generated client-side).');
+  } else {
+    key = generateKey(username);
+    keyHash = hashKey(key);
+  }
+
+  // Validate and parse socials input – accept both JSON ({type,url} array) and newline-separated plain URLs
+  let socials = [];
+  if (opts.socials) {
+    const raw = opts.socials.trim();
+    if (raw.startsWith('[')) {
+      // JSON array of {type, url} objects (from the web form)
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          socials = parsed
+            .filter(s => s && typeof s === 'object' && typeof s.url === 'string' && s.url.trim())
+            .map(s => ({
+              type: normalizePlatformType(s.type, s.url.trim()),
+              url:  s.url.trim().slice(0, 200),
+            }))
+            .slice(0, 20);
+        }
+      } catch (e) {
+        console.warn('Warning: Could not parse --socials as JSON, falling back to line-split.');
+        socials = raw.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 20)
+          .map(urlToSocialEntry);
+      }
+    } else {
+      // Legacy newline-separated plain URLs
+      socials = raw.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 20)
+        .map(urlToSocialEntry);
+    }
+  }
 
   // profile.yml
   const profileData = {
@@ -113,7 +180,7 @@ function main() {
     name: (opts.name || username).trim(),
     bio: (opts.bio || '').trim(),
     skills: opts.skills ? opts.skills.split(',').map(s => s.trim()).filter(Boolean) : [],
-    socials: opts.socials ? opts.socials.split('\n').map(s => s.trim()).filter(Boolean) : [],
+    socials,
     projects: [],
     language: opts.language || 'en',
     key_hash: keyHash,
@@ -176,10 +243,14 @@ function main() {
   }
 
   console.log(`Profile "${username}" created successfully.`);
-  console.log('==== PROFILE KEY (save this – shown only once) ====');
-  console.log(key);
-  console.log('====================================================');
-  console.log('The key hash has been stored in profile.yml. The raw key is NOT stored anywhere in the repository.');
+  if (key) {
+    console.log('==== PROFILE KEY (save this – shown only once) ====');
+    console.log(key);
+    console.log('====================================================');
+    console.log('The key hash has been stored in profile.yml. The raw key is NOT stored anywhere in the repository.');
+  } else {
+    console.log('Profile key was generated client-side. Only the hash is stored in profile.yml.');
+  }
 }
 
 main();

@@ -70,6 +70,28 @@ create:
   error_required: Questo campo è obbligatorio.
   download_yaml: Scarica YAML Profilo
   pr_instructions: "Per aggiungere il tuo profilo, apri una Pull Request con i file YAML generati."
+  section_platforms: Link delle piattaforme
+  field_github: Profilo GitHub
+  field_github_placeholder: "https://github.com/username"
+  field_nexusmods: Profilo Nexus Mods
+  field_nexusmods_placeholder: "https://www.nexusmods.com/users/123456"
+  field_curseforge: Profilo CurseForge
+  field_curseforge_placeholder: "https://www.curseforge.com/members/username"
+  field_link_placeholder: "https://example.com/tuoProfilo"
+  add_link: "+ Aggiungi link"
+  remove_link: Rimuovi
+  submit_pr_title: Crea automaticamente una Pull Request
+  submit_pat_label: "Token GitHub (ambito repo + workflow)"
+  submit_pat_placeholder: "ghp_…"
+  submit_pat_hint: "Fornisci un token di accesso personale GitHub per creare automaticamente un branch e aprire una PR. Il token non viene salvato da nessuna parte."
+  submit_pr_btn: "Crea Branch & Apri PR"
+  submit_pr_working: "Creazione PR in corso…"
+  submit_pr_success: "✅ Workflow avviato! Una PR verrà aperta a breve."
+  submit_pr_error: "Impossibile creare la PR. Controlla il token e riprova."
+  error_invalid_url: "Inserisci un URL valido (deve iniziare con https://)."
+  error_github_url: "Inserisci un URL di profilo GitHub valido (es. https://github.com/username)"
+  error_nexusmods_url: "Inserisci un URL di profilo Nexus Mods valido (es. https://www.nexusmods.com/users/12345)"
+  error_curseforge_url: "Inserisci un URL di profilo CurseForge valido (es. https://www.curseforge.com/members/username)"
 
 mods:
   title: Mod

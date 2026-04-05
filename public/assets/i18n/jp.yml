@@ -70,6 +70,28 @@ create:
   error_required: このフィールドは必須です。
   download_yaml: プロフィールYAMLをダウンロード
   pr_instructions: "プロフィールを追加するには、生成されたYAMLファイルでPull Requestを開いてください。"
+  section_platforms: プラットフォームリンク
+  field_github: GitHubプロフィール
+  field_github_placeholder: "https://github.com/username"
+  field_nexusmods: Nexus Modsプロフィール
+  field_nexusmods_placeholder: "https://www.nexusmods.com/users/123456"
+  field_curseforge: CurseForgeプロフィール
+  field_curseforge_placeholder: "https://www.curseforge.com/members/username"
+  field_link_placeholder: "https://example.com/yourprofile"
+  add_link: "+ リンクを追加"
+  remove_link: 削除
+  submit_pr_title: プルリクエストを自動作成
+  submit_pat_label: "GitHubトークン（repo + workflowスコープ）"
+  submit_pat_placeholder: "ghp_…"
+  submit_pat_hint: "GitHubの個人アクセストークンを入力すると、ブランチが自動作成されPRが開きます。トークンはどこにも保存されません。"
+  submit_pr_btn: "ブランチ作成 & PR作成"
+  submit_pr_working: "PR作成中…"
+  submit_pr_success: "✅ ワークフローが起動しました！まもなくPRが開きます。"
+  submit_pr_error: "PRを作成できませんでした。トークンを確認して再試行してください。"
+  error_invalid_url: "有効なURLを入力してください（https://で始まる必要があります）。"
+  error_github_url: "有効なGitHubプロフィールURLを入力してください（例: https://github.com/username）"
+  error_nexusmods_url: "有効なNexus ModsプロフィールURLを入力してください（例: https://www.nexusmods.com/users/12345）"
+  error_curseforge_url: "有効なCurseForgeプロフィールURLを入力してください（例: https://www.curseforge.com/members/username）"
 
 mods:
   title: MOD

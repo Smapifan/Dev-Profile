@@ -80,7 +80,6 @@ create:
   field_link_placeholder: "https://example.com/deinprofil"
   add_link: "+ Link hinzufügen"
   remove_link: Entfernen
-  submit_pr_title: Profil über GitHub Issue einreichen
   submit_issue_title: Profil über GitHub Issue einreichen
   submit_issue_hint: "Öffne ein GitHub Issue – github-actions[bot] erstellt automatisch einen Branch und einen Pull Request für dich. Kein Token nötig."
   submit_issue_btn: "Issue öffnen →"

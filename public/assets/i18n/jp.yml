@@ -80,7 +80,6 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ リンクを追加"
   remove_link: 削除
-  submit_pr_title: GitHub Issue で送信
   submit_issue_title: GitHub Issue で送信
   submit_issue_hint: "GitHub Issue を開いてください – github-actions[bot] が自動的にブランチと Pull Request を作成します。トークン不要。"
   submit_issue_btn: "Issue を開く →"

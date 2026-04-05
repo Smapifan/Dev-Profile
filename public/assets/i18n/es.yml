@@ -80,7 +80,6 @@ create:
   field_link_placeholder: "https://example.com/tuperfil"
   add_link: "+ Añadir enlace"
   remove_link: Eliminar
-  submit_pr_title: Enviar perfil mediante Issue de GitHub
   submit_issue_title: Enviar perfil mediante Issue de GitHub
   submit_issue_hint: "Abre un Issue de GitHub – github-actions[bot] creará automáticamente una rama y un Pull Request por ti. No se necesita ningún token."
   submit_issue_btn: "Abrir Issue →"

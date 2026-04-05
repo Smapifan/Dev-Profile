@@ -80,7 +80,6 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ 添加链接"
   remove_link: 删除
-  submit_pr_title: 通过 GitHub Issue 提交
   submit_issue_title: 通过 GitHub Issue 提交
   submit_issue_hint: "开启一个 GitHub Issue – github-actions[bot] 将自动为您创建分支和 Pull Request。无需令牌。"
   submit_issue_btn: "开启 Issue →"

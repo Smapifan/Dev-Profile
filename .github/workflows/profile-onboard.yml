@@ -1,0 +1,75 @@
+name: Profile Onboarding
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: "New profile username (letters, numbers, hyphens, underscores only)"
+        required: true
+      name:
+        description: "Display name"
+        required: true
+      bio:
+        description: "Short bio"
+        required: false
+        default: ""
+      skills:
+        description: "Comma-separated list of skills"
+        required: false
+        default: ""
+      socials:
+        description: "Social links (one per line, or comma-separated)"
+        required: false
+        default: ""
+      language:
+        description: "Preferred language code (en, de, es, fr, it, jp, cn)"
+        required: false
+        default: "en"
+
+jobs:
+  create-profile:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install js-yaml
+
+      - name: Create profile files
+        env:
+          PROFILE_KEY_SALT: ${{ secrets.PROFILE_KEY_SALT }}
+        run: |
+          node .github/scripts/create_profile.js \
+            --username "${{ github.event.inputs.username }}" \
+            --name "${{ github.event.inputs.name }}" \
+            --bio "${{ github.event.inputs.bio }}" \
+            --skills "${{ github.event.inputs.skills }}" \
+            --socials "${{ github.event.inputs.socials }}" \
+            --language "${{ github.event.inputs.language }}"
+
+      - name: Run initial mod cache update for new profile
+        env:
+          NEXUS_API_KEY: ${{ secrets.NEXUS_API_KEY }}
+          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+        run: node .github/scripts/update_mods.js
+
+      - name: Index uploads for new profile
+        run: node .github/scripts/process_uploads.js --username "${{ github.event.inputs.username }}"
+
+      - name: Commit new profile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add profiles/ profiles.yml
+          git diff --cached --quiet || git commit -m "feat: onboard new profile '${{ github.event.inputs.username }}'"
+          git push

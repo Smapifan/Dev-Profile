@@ -1,0 +1,94 @@
+# English – primary/required language
+lang: en
+lang_name: English
+
+nav:
+  home: Home
+  profiles: Profiles
+  new_profile: Create Profile
+  language: Language
+
+home:
+  title: Dev Profiles
+  subtitle: A platform for developers to showcase their mods and projects
+  all_profiles: All Profiles
+  no_profiles: No profiles found yet.
+  create_first: Be the first to create a profile!
+  loading: Loading profiles…
+  search_placeholder: Search profiles…
+
+profile:
+  title: "{{name}}'s Profile"
+  bio: Bio
+  skills: Skills
+  socials: Social Links
+  projects: Projects
+  mods: Mods
+  uploads: Uploads
+  no_mods: No mods listed yet.
+  no_uploads: No uploads yet.
+  loading_mods: Loading mods…
+  loading_uploads: Loading uploads…
+  last_updated: "Last updated: {{date}}"
+  edit_profile: Edit Profile
+  edit_key_prompt: Enter your profile key to edit
+  edit_key_wrong: Incorrect key. Please try again.
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} downloads"
+  rating: "Rating: {{score}}"
+  view_mod: View Mod
+
+create:
+  title: Create New Profile
+  subtitle: Fill in the details to create your developer profile
+  field_username: Username
+  field_username_placeholder: yourname
+  field_name: Display Name
+  field_name_placeholder: Your Name
+  field_bio: Bio
+  field_bio_placeholder: Tell us about yourself…
+  field_skills: Skills (comma-separated)
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: Social Links (one per line)
+  field_socials_placeholder: "https://github.com/yourname"
+  field_language: Preferred Language
+  submit: Create Profile
+  generating: Generating profile…
+  success_title: Profile Created!
+  success_message: "Your profile '{{username}}' has been created. A workflow has been triggered to set up your mod cache."
+  key_info: "Your profile key is shown below. Save it – you will need it to edit your profile later. It is never shown again."
+  your_key: Your Profile Key
+  copy_key: Copy Key
+  copied: Copied!
+  error_username_taken: This username is already taken.
+  error_username_invalid: Username may only contain letters, numbers, hyphens and underscores.
+  error_required: This field is required.
+  download_yaml: Download Profile YAML
+  pr_instructions: "To add your profile, open a Pull Request with the generated YAML files."
+
+mods:
+  title: Mods
+  loading: Loading mod data…
+  error: Could not load mod data.
+  no_data: No mod data available yet. The cache will be updated automatically.
+  updated_at: "Cache updated: {{date}}"
+
+uploads:
+  title: Uploads
+  loading: Loading uploads…
+  error: Could not load upload list.
+  no_files: No uploads yet.
+  file_name: File
+  file_size: Size
+  uploaded_at: Uploaded
+
+footer:
+  powered_by: Powered by GitHub Actions
+  contribute: Contribute on GitHub
+  license: MIT License
+
+errors:
+  not_found: Page not found.
+  load_failed: Failed to load data.
+  network: Network error. Please try again.

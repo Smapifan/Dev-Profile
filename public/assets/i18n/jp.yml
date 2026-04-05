@@ -87,6 +87,9 @@ create:
   error_github_url: "有効なGitHubプロフィールURLを入力してください（例: https://github.com/username）"
   error_nexusmods_url: "有効なNexus ModsプロフィールURLを入力してください（例: https://www.nexusmods.com/users/12345）"
   error_curseforge_url: "有効なCurseForgeプロフィールURLを入力してください（例: https://www.curseforge.com/members/username）"
+  submit_pr_pending: "GitHub Issue を開いています…"
+  submit_pr_success: "GitHub Issue が開かれました！PR が自動的に作成されます。"
+  submit_pr_error: "Issue を自動的に開けませんでした。下のボタンをご利用ください。"
 
 mods:
   title: MOD

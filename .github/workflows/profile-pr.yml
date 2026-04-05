@@ -1,124 +1,40 @@
-name: Create Profile PR
-
-# Triggered via GitHub API dispatch (from the profile-creation form) or manually from the Actions UI.
-# Creates a new branch with the submitted profile data and opens a Pull Request.
+name: Auto-Profile-PR (no Token from User needed)
 
 on:
+  issues:
+    types: [opened]
   workflow_dispatch:
-    inputs:
-      username:
-        description: "Username (letters, numbers, hyphens, underscores; max 40 chars)"
-        required: true
-      name:
-        description: "Display name"
-        required: true
-      bio:
-        description: "Short bio (optional)"
-        required: false
-        default: ""
-      skills:
-        description: "Comma-separated list of skills (optional)"
-        required: false
-        default: ""
-      socials:
-        description: "JSON array of {type, url} objects for platform links (optional)"
-        required: false
-        default: "[]"
-      language:
-        description: "Preferred language code (en | de | es | fr | it | jp | cn)"
-        required: false
-        default: "en"
-      key_hash:
-        description: "SHA-256 hash of the profile key (generated client-side; never stored raw)"
-        required: false
-        default: ""
 
 jobs:
   create-profile-pr:
+    if: >
+      startsWith(github.event.issue.title, '[Profil Submission]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install dependencies
-        run: npm install js-yaml
-
-      - name: Validate inputs
-        id: validate
+      - name: Create profile YAML from issue
+        id: profile
         run: |
-          USERNAME="${{ github.event.inputs.username }}"
-          if [[ ! "$USERNAME" =~ ^[a-zA-Z0-9_-]{1,40}$ ]]; then
-            echo "::error::Invalid username: '$USERNAME'. Use only letters, numbers, hyphens and underscores (max 40 chars)."
-            exit 1
-          fi
-          if [ -d "profiles/$USERNAME" ]; then
-            echo "::error::Profile '$USERNAME' already exists."
-            exit 1
-          fi
-          echo "username=$USERNAME" >> "$GITHUB_OUTPUT"
+          echo "${{ github.event.issue.body }}" > profiles/profile-${{ github.event.issue.number }}.yml
 
-      - name: Create profile files
-        env:
-          PROFILE_KEY_SALT: ${{ secrets.PROFILE_KEY_SALT }}
+      - name: Create new branch
         run: |
-          node .github/scripts/create_profile.js \
-            --username "${{ steps.validate.outputs.username }}" \
-            --name     "${{ github.event.inputs.name }}" \
-            --bio      "${{ github.event.inputs.bio }}" \
-            --skills   "${{ github.event.inputs.skills }}" \
-            --socials  "${{ github.event.inputs.socials }}" \
-            --language "${{ github.event.inputs.language }}" \
-            --key-hash "${{ github.event.inputs.key_hash }}"
-
-      - name: Create branch and open PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          USERNAME="${{ steps.validate.outputs.username }}"
-          BRANCH_PREFIX="profile/${USERNAME}"
-          TIMESTAMP=$(date -u +%Y%m%dT%H%M%S)
-          BRANCH_UNIQUE="${BRANCH_PREFIX}-${TIMESTAMP}"
-
-          git config user.name  "github-actions[bot]"
+          git checkout -b profile/new-${{ github.event.issue.number }}
+          git add profiles/profile-${{ github.event.issue.number }}.yml
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git commit -m "Add profile from issue #${{ github.event.issue.number }}"
+          git push origin profile/new-${{ github.event.issue.number }}
 
-          git checkout -b "$BRANCH_UNIQUE"
-          git add "profiles/${USERNAME}/" profiles.yml
-          git commit -m "feat: add profile '${USERNAME}'"
-          git push origin "$BRANCH_UNIQUE"
-
-          gh pr create \
-            --base main \
-            --head "$BRANCH_UNIQUE" \
-            --title "feat: add profile '${USERNAME}'" \
-            --body "$(cat <<EOF
-## New Developer Profile: \`${USERNAME}\`
-
-This Pull Request was automatically created from the [Dev-Profile form](https://smapifan.github.io/Dev-Profile/).
-
-### Profile details
-- **Username:** \`${USERNAME}\`
-- **Display name:** ${{ github.event.inputs.name }}
-- **Language:** ${{ github.event.inputs.language }}
-
-### Checklist
-- [ ] Username is unique and valid
-- [ ] Bio and links look correct
-- [ ] No sensitive data included
-
-> ⚠️ The profile key hash is stored in \`profiles/${USERNAME}/profile.yml\`. The raw key was generated client-side and is never transmitted or stored.
-EOF
-)"
-
-          echo "✅ PR created for profile '${USERNAME}' on branch '${BRANCH_UNIQUE}'."
+      - name: Open Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: profile/new-${{ github.event.issue.number }}
+          title: "Profil-PR: Profile von Issue #${{ github.event.issue.number }}"
+          body: |
+            Dieses Profil stammt aus [Issue #${{ github.event.issue.number }}](${{ github.event.issue.html_url }}).

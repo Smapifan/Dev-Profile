@@ -1,89 +1,26 @@
-name: "🚀 New Developer Profile"
-description: "Submit your developer profile. GitHub Actions will automatically create a branch and open a Pull Request – no token required."
-title: "[Profile] "
-labels:
-  - "profile-submission"
+name: Profil Submission
+description: Ein neues Entwickler-Profil für das Repository vorschlagen.
+title: "[Profil Submission] <dein Name>"
 body:
-  - type: markdown
-    attributes:
-      value: |
-        ## Submit your Developer Profile
-
-        Fill in the fields below and submit the issue.
-        **GitHub Actions** will automatically create a new branch, commit your profile data, and open a Pull Request – no Personal Access Token needed!
-
   - type: input
     id: username
     attributes:
-      label: "Username"
-      description: "Your GitHub username or a unique handle (letters, numbers, hyphens, underscores; max 40 chars)."
-      placeholder: "yourname"
+      label: GitHub Username
+      description: Dein GitHub-Benutzername
+      placeholder: z.B. maxmustermann
     validations:
       required: true
-
   - type: input
-    id: display_name
+    id: nexusmods
     attributes:
-      label: "Display Name"
-      description: "Your full name or display name."
-      placeholder: "Your Name"
-    validations:
-      required: true
-
+      label: Nexus Mods Name (optional)
+      description: Dein NexusMods-Account
+  - type: input
+    id: curseforge
+    attributes:
+      label: CurseForge Name (optional)
+      description: Dein CurseForge-Account
   - type: textarea
     id: bio
     attributes:
-      label: "Bio"
-      description: "A short description about you (optional)."
-      placeholder: "I'm a developer who loves modding and open source."
-    validations:
-      required: false
-
-  - type: input
-    id: skills
-    attributes:
-      label: "Skills"
-      description: "Comma-separated list of skills."
-      placeholder: "JavaScript, Modding, Python, GitHub Actions"
-    validations:
-      required: false
-
-  - type: textarea
-    id: socials
-    attributes:
-      label: "Platform Links"
-      description: |
-        One URL per line, or a JSON array of `{type, url}` objects.
-        Supported types: `github`, `nexusmods`, `curseforge`, `twitter`, `discord`, `youtube`, `twitch`, `link`.
-        If a plain URL is given, the platform is auto-detected.
-      placeholder: |
-        https://github.com/yourname
-        https://www.nexusmods.com/users/123456
-        https://www.curseforge.com/members/yourname
-    validations:
-      required: false
-
-  - type: dropdown
-    id: language
-    attributes:
-      label: "Preferred Language"
-      description: "Select the language for your profile page."
-      options:
-        - "en"
-        - "de"
-        - "es"
-        - "fr"
-        - "it"
-        - "jp"
-        - "cn"
-      default: 0
-    validations:
-      required: false
-
-  - type: checkboxes
-    id: confirm
-    attributes:
-      label: "Confirmation"
-      options:
-        - label: "I confirm that the information above is accurate and I agree to have this profile added to Dev-Profile."
-          required: true
+      label: Kurz-Bio/Über dich (optional)

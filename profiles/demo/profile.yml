@@ -1,20 +1,4 @@
-username: demo
-name: Demo Developer
-bio: "A demo developer profile showcasing the Dev-Profile platform. Edit mods.yml to add your own mods!"
-skills:
-  - JavaScript
-  - Modding
-  - YAML
-  - GitHub Actions
-socials:
-  - type: github
-    url: https://github.com/Smapifan
-  - type: nexusmods
-    url: https://www.nexusmods.com/users/123456
-  - type: curseforge
-    url: https://www.curseforge.com/members/demo
-projects:
-  - Dev-Profile Platform
-language: en
-key_hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-created_at: "2024-01-01T00:00:00.000Z"
+github: maxmustermann
+nexusmods: max123
+curseforge: mustercf
+bio: "Modder mit Leib und Seele!"

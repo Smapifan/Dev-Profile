@@ -69,7 +69,7 @@ create:
   error_username_invalid: Username may only contain letters, numbers, hyphens and underscores.
   error_required: This field is required.
   download_yaml: Download Profile YAML
-  pr_instructions: "To add your profile, open a Pull Request with the generated YAML files."
+  pr_instructions: "To publish your profile, open a GitHub Issue using the template – GitHub Actions will handle the rest automatically."
   section_platforms: Platform Links
   field_github: GitHub Profile
   field_github_placeholder: "https://github.com/username"
@@ -80,14 +80,11 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ Add Link"
   remove_link: Remove
-  submit_pr_title: Auto-create Pull Request
-  submit_pat_label: "GitHub Token (repo + workflow scope)"
-  submit_pat_placeholder: "ghp_…"
-  submit_pat_hint: "Provide a GitHub Personal Access Token to automatically create a branch and open a PR. Your token is not stored anywhere."
-  submit_pr_btn: "Create Branch & Open PR"
-  submit_pr_working: "Creating PR…"
-  submit_pr_success: "✅ Workflow triggered! A PR will be opened shortly."
-  submit_pr_error: "Could not create PR. Check your token and try again."
+  submit_pr_title: Submit via GitHub Issue
+  submit_issue_title: Submit via GitHub Issue
+  submit_issue_hint: "Open a GitHub Issue – github-actions[bot] will automatically create a branch and Pull Request for you. No token needed."
+  submit_issue_btn: "Open Issue →"
+  pr_instructions: "To publish your profile, open a GitHub Issue using the template – GitHub Actions will handle the rest automatically."
   error_invalid_url: "Please enter a valid URL (must start with https://)."
   error_github_url: "Enter a valid GitHub profile URL (e.g. https://github.com/username)"
   error_nexusmods_url: "Enter a valid Nexus Mods profile URL (e.g. https://www.nexusmods.com/users/12345)"

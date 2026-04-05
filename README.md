@@ -190,8 +190,8 @@ When triggered (via the web form or the Actions UI), this workflow:
 4. Commits and pushes the new files.
 5. Opens a Pull Request with a pre-filled description for review.
 
-**Triggering from the form:**  
-The form calls `POST /repos/Smapifan/Dev-Profile/actions/workflows/profile-pr.yml/dispatches` with a GitHub Personal Access Token provided by the user. The token requires `repo` and `workflow` scopes. It is used only for the API call and is never stored.
+**Triggering from the issue form:**  
+Users open a **[New Developer Profile](../../issues/new?template=profile-submission.yml)** issue — `github-actions[bot]` handles everything automatically using the built-in `GITHUB_TOKEN`. No Personal Access Token is required or accepted.
 
 ---
 
@@ -237,12 +237,9 @@ create.field_nexusmods          — Nexus Mods field label
 create.field_curseforge         — CurseForge field label
 create.add_link                 — "+ Add Link" button
 create.remove_link              — "Remove" button for extra links
-create.submit_pr_title          — PR trigger section header
-create.submit_pat_hint          — PAT input description
-create.submit_pr_btn            — "Create Branch & Open PR" button
-create.submit_pr_working        — Loading state message
-create.submit_pr_success        — Success message
-create.submit_pr_error          — Error message
+create.submit_issue_title       — Issue submission section header
+create.submit_issue_hint        — Issue submission description
+create.submit_issue_btn         — "Open Issue →" button
 create.error_github_url         — GitHub validation error
 create.error_nexusmods_url      — Nexus Mods validation error
 create.error_curseforge_url     — CurseForge validation error

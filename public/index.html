@@ -603,23 +603,6 @@
       max-width: 100% !important;
     }
     .pr-trigger-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
-    .pr-trigger input {
-      flex: 1;
-      min-width: 0;
-      background: var(--input-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 12px;
-      font-size: 0.88rem;
-      font-family: "SF Mono", "Fira Code", Consolas, monospace;
-      outline: none;
-      transition: border-color var(--transition);
-    }
-    .pr-trigger input:focus { border-color: var(--accent); }
-    .pr-status { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; min-height: 1.1em; }
-    .pr-status.success { color: var(--green); }
-    .pr-status.error   { color: var(--red); }
 
     /* ── Social badges on profile cards ─────────────────────────── */
     .card-socials { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
@@ -892,17 +875,14 @@
         <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
       </div>
       <div class="pr-trigger">
-        <h4 data-i18n="create.submit_pr_title">Auto-create Pull Request</h4>
-        <p data-i18n="create.submit_pat_hint">Provide a GitHub Personal Access Token to automatically create a branch and open a PR. Your token is not stored anywhere.</p>
+        <h4 data-i18n="create.submit_issue_title">Submit via GitHub Issue</h4>
+        <p data-i18n="create.submit_issue_hint">Open a GitHub Issue – <strong>github-actions[bot]</strong> will automatically create a branch and Pull Request for you. No token needed.</p>
         <div class="pr-trigger-row">
-          <input type="password" id="pat-input"
-                 data-i18n-placeholder="create.submit_pat_placeholder"
-                 placeholder="ghp_…"
-                 autocomplete="off" spellcheck="false" />
-          <button class="btn btn-primary" onclick="triggerWorkflow()" id="btn-pr"
-                  data-i18n="create.submit_pr_btn">Create Branch &amp; Open PR</button>
+          <a class="btn btn-primary"
+             href="https://github.com/Smapifan/Dev-Profile/issues/new?template=profile-submission.yml"
+             target="_blank" rel="noopener noreferrer"
+             data-i18n="create.submit_issue_btn">Open Issue →</a>
         </div>
-        <div class="pr-status" id="pr-status" role="status" aria-live="polite"></div>
       </div>
       <p class="form-hint" data-i18n="create.pr_instructions">Open a Pull Request with your YAML files to publish your profile.</p>
     </div>
@@ -1043,72 +1023,6 @@ function isValidNexusModsProfile(url) {
 }
 function isValidCurseForgeProfile(url) {
   return PLATFORMS.curseforge.pattern.test(url);
-}
-
-/* ── Trigger Workflow via GitHub Dispatch API ───────────────────────── */
-async function triggerWorkflow() {
-  const pat = (document.getElementById('pat-input').value || '').trim();
-  const statusEl = document.getElementById('pr-status');
-  const btn = document.getElementById('btn-pr');
-
-  statusEl.className = 'pr-status';
-  statusEl.textContent = '';
-
-  if (!pat) {
-    statusEl.className = 'pr-status error';
-    statusEl.textContent = t('create.submit_pr_error') || 'Please provide a GitHub token.';
-    return;
-  }
-  if (!generatedData) {
-    statusEl.className = 'pr-status error';
-    statusEl.textContent = t('create.submit_pr_error') || 'No profile data. Please fill in the form first.';
-    return;
-  }
-
-  btn.disabled = true;
-  statusEl.className = 'pr-status';
-  statusEl.textContent = t('create.submit_pr_working') || 'Creating PR…';
-
-  try {
-    const inputs = {
-      username:  generatedData.username,
-      name:      generatedData.name,
-      bio:       generatedData.bio || '',
-      skills:    (generatedData.skills || []).join(','),
-      socials:   JSON.stringify(generatedData.socials || []),
-      language:  generatedData.language || 'en',
-      key_hash:  generatedData.key_hash || '',
-    };
-
-    const resp = await fetch(
-      'https://api.github.com/repos/Smapifan/Dev-Profile/actions/workflows/profile-pr.yml/dispatches',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${pat}`,
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ref: 'main', inputs }),
-      }
-    );
-
-    if (resp.status === 204) {
-      statusEl.className = 'pr-status success';
-      statusEl.textContent = t('create.submit_pr_success') || '✅ Workflow triggered! A PR will be opened shortly.';
-      /* Keep the button disabled after success to prevent duplicate PR creation */
-      btn.textContent = t('create.submit_pr_success') || '✅ PR triggered!';
-    } else {
-      statusEl.className = 'pr-status error';
-      statusEl.textContent = `${t('create.submit_pr_error') || 'Error'} (HTTP ${resp.status})`;
-      btn.disabled = false;
-    }
-  } catch (err) {
-    statusEl.className = 'pr-status error';
-    statusEl.textContent = `${t('create.submit_pr_error') || 'Error'}: ${err.message}`;
-    btn.disabled = false;
-  }
 }
 
 /* ── i18n ──────────────────────────────────────────────────────────── */
@@ -1326,13 +1240,6 @@ function openCreateModal() {
   extraLinkIds = [];
   const extraContainer = document.getElementById('extra-links');
   if (extraContainer) extraContainer.innerHTML = '';
-  /* reset PR trigger */
-  const patInput = document.getElementById('pat-input');
-  if (patInput) patInput.value = '';
-  const prStatus = document.getElementById('pr-status');
-  if (prStatus) { prStatus.textContent = ''; prStatus.className = 'pr-status'; }
-  const btnPr = document.getElementById('btn-pr');
-  if (btnPr) { btnPr.disabled = false; btnPr.textContent = t('create.submit_pr_btn') || 'Create Branch & Open PR'; }
   generatedKey = null; generatedData = null;
   document.getElementById('f-username').focus();
 }

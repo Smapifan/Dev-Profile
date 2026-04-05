@@ -774,7 +774,7 @@ function currentLang() {
 }
 
 async function loadI18n(lang) {
-  if (typeof jsyaml === 'undefined') return; /* CDN not loaded, use fallback */
+  if (typeof jsyaml === 'undefined') { i18n = I18N_FALLBACK; return; } /* CDN not loaded */
   /* Validate lang against allow-list to prevent path traversal */
   const safeLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
   try {
@@ -1051,8 +1051,11 @@ async function copyKey() {
   }
 }
 
+const DOWNLOAD_DELAY_MS = 350;
+
 function downloadYaml() {
   if (!generatedData) return;
+  if (typeof jsyaml === 'undefined') { showToast('❌', t('errors.load_failed') || 'YAML library not loaded'); return; }
   const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
   const modsYaml    = `# Add your mods here.\n# Format: { nexusmods: "gameSlug/modId" } or { curseforge: projectId }\n`;
   const cacheYaml   = jsyaml.dump({ profile: generatedData.username, updated_at: new Date().toISOString(), mods: [] });
@@ -1062,7 +1065,7 @@ function downloadYaml() {
     [modsYaml,    'mods.yml'],
     [cacheYaml,   'mods_cache.yml'],
   ].forEach(([content, name], i) => {
-    setTimeout(() => dlBlob(content, name), i * 350);
+    setTimeout(() => dlBlob(content, name), i * DOWNLOAD_DELAY_MS);
   });
 }
 

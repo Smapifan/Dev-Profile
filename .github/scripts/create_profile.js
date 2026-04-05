@@ -79,6 +79,10 @@ function validateUsername(username) {
 
 // ---------- Platform detection (mirrors client-side logic) ----------
 
+const VALID_PLATFORM_TYPES = new Set([
+  'github', 'nexusmods', 'curseforge', 'twitter', 'discord', 'youtube', 'twitch', 'link',
+]);
+
 function detectPlatformNode(url) {
   if (!url) return 'link';
   const u = url.toLowerCase();
@@ -90,6 +94,17 @@ function detectPlatformNode(url) {
   if (/youtube\.com|youtu\.be/.test(u)) return 'youtube';
   if (/twitch\.tv/.test(u)) return 'twitch';
   return 'link';
+}
+
+/** Normalize a raw type string: must be in the allow-list, else auto-detect from URL. */
+function normalizePlatformType(rawType, url) {
+  const t = (rawType || '').toLowerCase().trim();
+  return VALID_PLATFORM_TYPES.has(t) ? t : detectPlatformNode(url);
+}
+
+/** Map a plain URL string to a {type, url} social entry. */
+function urlToSocialEntry(url) {
+  return { type: detectPlatformNode(url), url };
 }
 
 // ---------- Main ----------
@@ -141,18 +156,21 @@ function main() {
         if (Array.isArray(parsed)) {
           socials = parsed
             .filter(s => s && typeof s === 'object' && typeof s.url === 'string' && s.url.trim())
-            .map(s => ({ type: (s.type || 'link').slice(0, 30), url: s.url.trim().slice(0, 200) }))
+            .map(s => ({
+              type: normalizePlatformType(s.type, s.url.trim()),
+              url:  s.url.trim().slice(0, 200),
+            }))
             .slice(0, 20);
         }
       } catch (e) {
         console.warn('Warning: Could not parse --socials as JSON, falling back to line-split.');
         socials = raw.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 20)
-          .map(url => ({ type: detectPlatformNode(url), url }));
+          .map(urlToSocialEntry);
       }
     } else {
       // Legacy newline-separated plain URLs
       socials = raw.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 20)
-        .map(url => ({ type: detectPlatformNode(url), url }));
+        .map(urlToSocialEntry);
     }
   }
 

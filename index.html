@@ -1056,8 +1056,8 @@ async function triggerWorkflow() {
     if (resp.status === 204) {
       statusEl.className = 'pr-status success';
       statusEl.textContent = t('create.submit_pr_success') || '✅ Workflow triggered! A PR will be opened shortly.';
+      /* Keep the button disabled after success to prevent duplicate PR creation */
       btn.textContent = t('create.submit_pr_success') || '✅ PR triggered!';
-      btn.disabled = false;
     } else {
       statusEl.className = 'pr-status error';
       statusEl.textContent = `${t('create.submit_pr_error') || 'Error'} (HTTP ${resp.status})`;
@@ -1354,9 +1354,14 @@ async function handleCreate() {
   if (!username) { showError('err-username', t('create.error_required')); valid = false; }
   else if (!/^[a-zA-Z0-9_-]{1,40}$/.test(username)) { showError('err-username', t('create.error_username_invalid')); valid = false; }
   if (!name) { showError('err-name', t('create.error_required')); valid = false; }
-  if (githubUrl     && !isValidGitHubProfile(githubUrl))       { showError('err-github',     t('create.error_github_url'));     valid = false; }
-  if (nexusmodsUrl  && !isValidNexusModsProfile(nexusmodsUrl)) { showError('err-nexusmods',  t('create.error_nexusmods_url')); valid = false; }
-  if (curseforgeUrl && !isValidCurseForgeProfile(curseforgeUrl)) { showError('err-curseforge', t('create.error_curseforge_url')); valid = false; }
+
+  /* Validate platform URLs using a shared helper */
+  function checkPlatformUrl(url, validator, errId, errKey) {
+    if (url && !validator(url)) { showError(errId, t(errKey)); valid = false; }
+  }
+  checkPlatformUrl(githubUrl,     isValidGitHubProfile,     'err-github',     'create.error_github_url');
+  checkPlatformUrl(nexusmodsUrl,  isValidNexusModsProfile,  'err-nexusmods',  'create.error_nexusmods_url');
+  checkPlatformUrl(curseforgeUrl, isValidCurseForgeProfile, 'err-curseforge', 'create.error_curseforge_url');
   if (!valid) return;
 
   const taken = allProfiles.map(p => (p.username || '').toLowerCase());

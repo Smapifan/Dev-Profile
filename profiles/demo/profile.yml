@@ -7,7 +7,12 @@ skills:
   - YAML
   - GitHub Actions
 socials:
-  - https://github.com/Smapifan
+  - type: github
+    url: https://github.com/Smapifan
+  - type: nexusmods
+    url: https://www.nexusmods.com/users/123456
+  - type: curseforge
+    url: https://www.curseforge.com/members/demo
 projects:
   - Dev-Profile Platform
 language: en

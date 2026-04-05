@@ -775,12 +775,14 @@ function currentLang() {
 
 async function loadI18n(lang) {
   if (typeof jsyaml === 'undefined') return; /* CDN not loaded, use fallback */
+  /* Validate lang against allow-list to prevent path traversal */
+  const safeLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
   try {
-    const res = await fetch(`assets/i18n/${lang}.yml`);
+    const res = await fetch(`assets/i18n/${safeLang}.yml`);
     if (!res.ok) throw new Error(res.status);
     i18n = jsyaml.load(await res.text()) || I18N_FALLBACK;
   } catch {
-    if (lang !== 'en') {
+    if (safeLang !== 'en') {
       try {
         const res = await fetch('assets/i18n/en.yml');
         i18n = jsyaml.load(await res.text()) || I18N_FALLBACK;
@@ -944,7 +946,7 @@ function renderProfiles(profiles) {
       ${skills.length ? `<div class="tags">${skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>` : ''}
       <div class="card-footer">
         <span>${date ? `${esc(t('profile.last_updated').replace('{{date}}', date))}` : ''}</span>
-        <span class="card-footer-link">${esc(t('profile.edit_profile') || 'View')} →</span>
+        <span class="card-footer-link">${esc(t('nav.profiles') || 'View')} →</span>
       </div>
     </a>`;
   }).join('');
@@ -990,12 +992,18 @@ async function sha256(msg) {
 
 async function handleCreate() {
   clearErrors();
-  const username = document.getElementById('f-username').value.trim();
-  const name     = document.getElementById('f-name').value.trim();
-  const bio      = document.getElementById('f-bio').value.trim();
-  const skills   = document.getElementById('f-skills').value.split(',').map(s => s.trim()).filter(Boolean);
-  const socials  = document.getElementById('f-socials').value.split('\n').map(s => s.trim()).filter(Boolean);
-  const language = document.getElementById('f-language').value;
+  /* Sanitize: strip control characters, trim, cap length */
+  const sanitize = (s, maxLen = 500) =>
+    String(s ?? '').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, '').trim().slice(0, maxLen);
+
+  const username = sanitize(document.getElementById('f-username').value, 40);
+  const name     = sanitize(document.getElementById('f-name').value, 120);
+  const bio      = sanitize(document.getElementById('f-bio').value, 500);
+  const skills   = document.getElementById('f-skills').value.split(',').map(s => sanitize(s, 60)).filter(Boolean).slice(0, 20);
+  const socials  = document.getElementById('f-socials').value.split('\n').map(s => sanitize(s, 200)).filter(Boolean).slice(0, 10);
+  /* language must be in the supported list */
+  const rawLang  = document.getElementById('f-language').value;
+  const language = SUPPORTED_LANGS.includes(rawLang) ? rawLang : 'en';
 
   let valid = true;
   if (!username) { showError('err-username', t('create.error_required')); valid = false; }

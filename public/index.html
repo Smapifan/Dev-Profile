@@ -603,6 +603,9 @@
       max-width: 100% !important;
     }
     .pr-trigger-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+    .pr-status { font-size: 0.85rem; margin-top: 12px; padding: 8px 12px; border-radius: 6px; max-width: 400px; text-align: center; }
+    .pr-status-ok  { color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); }
+    .pr-status-err { color: var(--red);   background: color-mix(in srgb, var(--red)   12%, transparent); }
 
     /* ── Social badges on profile cards ─────────────────────────── */
     .card-socials { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
@@ -874,17 +877,15 @@
         <button class="btn btn-primary" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
         <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
       </div>
-      <div class="pr-trigger">
+      <p id="pr-status" class="pr-status"></p>
+      <div id="pr-fallback" class="pr-trigger" style="display:none">
         <h4 data-i18n="create.submit_issue_title">Submit via GitHub Issue</h4>
         <p data-i18n="create.submit_issue_hint">Open a GitHub Issue – <strong>github-actions[bot]</strong> will automatically create a branch and Pull Request for you. No token needed.</p>
         <div class="pr-trigger-row">
-          <a class="btn btn-primary"
-             href="https://github.com/Smapifan/Dev-Profile/issues/new?template=profile-submission.yml"
-             target="_blank" rel="noopener noreferrer"
+          <a class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer"
              data-i18n="create.submit_issue_btn">Open Issue →</a>
         </div>
       </div>
-      <p class="form-hint" data-i18n="create.pr_instructions">Open a Pull Request with your YAML files to publish your profile.</p>
     </div>
   </div>
 </div>
@@ -1241,6 +1242,11 @@ function openCreateModal() {
   const extraContainer = document.getElementById('extra-links');
   if (extraContainer) extraContainer.innerHTML = '';
   generatedKey = null; generatedData = null;
+  /* reset PR status */
+  const prStatus = document.getElementById('pr-status');
+  const prFallback = document.getElementById('pr-fallback');
+  if (prStatus)  { prStatus.textContent = ''; prStatus.className = 'pr-status'; }
+  if (prFallback) prFallback.style.display = 'none';
   document.getElementById('f-username').focus();
 }
 
@@ -1327,6 +1333,20 @@ async function handleCreate() {
   generatedKey  = key;
   generatedData = { username, name, bio, skills, socials, projects: [], language, key_hash: keyHash, created_at: new Date().toISOString() };
 
+  /* Build pre-filled GitHub issue URL and auto-open it */
+  let issueOpened = false;
+  let issueUrl = '';
+  try {
+    if (typeof jsyaml !== 'undefined') {
+      const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
+      const issueTitle  = encodeURIComponent(`[Profil Submission] ${username}`);
+      const issueBody   = encodeURIComponent(profileYaml);
+      issueUrl = `https://github.com/Smapifan/Dev-Profile/issues/new?title=${issueTitle}&body=${issueBody}`;
+      const win = window.open(issueUrl, '_blank', 'noopener,noreferrer');
+      issueOpened = !!win;
+    }
+  } catch (_) { /* popup blocked – fallback shown below */ }
+
   btn.disabled = false;
   btn.textContent = t('create.submit');
 
@@ -1335,6 +1355,25 @@ async function handleCreate() {
   ss.classList.add('open');
   document.getElementById('success-msg').textContent  = t('create.success_message', { username });
   document.getElementById('key-value').textContent    = key;
+
+  /* Show PR submission status */
+  const prStatus = document.getElementById('pr-status');
+  const prFallback = document.getElementById('pr-fallback');
+  if (prStatus) {
+    if (issueOpened) {
+      prStatus.textContent = t('create.submit_pr_success');
+      prStatus.className = 'pr-status pr-status-ok';
+      if (prFallback) prFallback.style.display = 'none';
+    } else {
+      prStatus.textContent = t('create.submit_pr_error');
+      prStatus.className = 'pr-status pr-status-err';
+      if (prFallback && issueUrl) {
+        const a = prFallback.querySelector('a');
+        if (a) a.href = issueUrl;
+        prFallback.style.display = '';
+      }
+    }
+  }
 }
 
 async function copyKey() {

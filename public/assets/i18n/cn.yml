@@ -87,6 +87,9 @@ create:
   error_github_url: "请输入有效的 GitHub 个人主页网址（例如 https://github.com/username）"
   error_nexusmods_url: "请输入有效的 Nexus Mods 个人主页网址（例如 https://www.nexusmods.com/users/12345）"
   error_curseforge_url: "请输入有效的 CurseForge 个人主页网址（例如 https://www.curseforge.com/members/username）"
+  submit_pr_pending: "正在开启 GitHub Issue…"
+  submit_pr_success: "GitHub Issue 已开启！您的 PR 将自动创建。"
+  submit_pr_error: "无法自动开启 Issue，请使用下方按钮。"
 
 mods:
   title: 模组

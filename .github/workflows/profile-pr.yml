@@ -7,8 +7,7 @@ on:
 
 jobs:
   create-profile-pr:
-    if: >
-      startsWith(github.event.issue.title, '[Profil Submission]')
+    if: startsWith(github.event.issue.title, '[Profil Submission]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -17,24 +16,105 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create profile YAML from issue
-        id: profile
+      - name: Parse profile YAML and create files
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          echo "${{ github.event.issue.body }}" > profiles/profile-${{ github.event.issue.number }}.yml
+          # Write issue body to file securely (avoids shell injection)
+          printf '%s' "$ISSUE_BODY" > /tmp/profile.yml
 
-      - name: Create new branch
+          # Extract username from YAML
+          USERNAME=$(python3 -c "
+          import yaml, sys, re
+          try:
+              data = yaml.safe_load(open('/tmp/profile.yml').read()) or {}
+              username = str(data.get('username', ''))
+              # Sanitize: only allow alphanumeric, hyphens, underscores (max 40 chars)
+              if re.fullmatch(r'[a-zA-Z0-9_-]{1,40}', username):
+                  print(username)
+              else:
+                  print('')
+          except Exception as e:
+              sys.stderr.write(f'Failed to parse profile YAML: {e}\n')
+              print('')
+          ")
+
+          if [ -z "$USERNAME" ]; then
+            echo "ERROR: Could not parse username from issue body" >&2
+            exit 1
+          fi
+
+          echo "USERNAME=$USERNAME" >> "$GITHUB_ENV"
+          export USERNAME
+
+          # Create profile directory structure
+          mkdir -p "profiles/$USERNAME/uploads"
+          touch "profiles/$USERNAME/uploads/.gitkeep"
+
+          # Write profile YAML
+          cp /tmp/profile.yml "profiles/$USERNAME/profile.yml"
+
+          # Create mods.yml template
+          printf '# Add your mods here.\n# Format: { nexusmods: "gameSlug/modId" } or { curseforge: projectId }\n' \
+            > "profiles/$USERNAME/mods.yml"
+
+          # Create mods_cache.yml, uploads_index.yml, and update profiles.yml
+          python3 << 'PYEOF'
+          import yaml, os, datetime
+
+          username = os.environ['USERNAME']
+          now = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+
+          with open(f'profiles/{username}/mods_cache.yml', 'w') as f:
+              yaml.dump({'profile': username, 'updated_at': now, 'mods': []},
+                        f, default_flow_style=False, allow_unicode=True)
+
+          with open(f'profiles/{username}/uploads_index.yml', 'w') as f:
+              yaml.dump({'profile': username, 'updated_at': now, 'files': []},
+                        f, default_flow_style=False, allow_unicode=True)
+
+          # Copy profile page template from demo
+          import shutil
+          demo_page = 'profiles/demo/index.html'
+          if os.path.exists(demo_page):
+              shutil.copy(demo_page, f'profiles/{username}/index.html')
+
+          # Update profiles.yml registry
+          try:
+              with open('profiles.yml', 'r') as f:
+                  data = yaml.safe_load(f) or {}
+          except FileNotFoundError:
+              data = {}
+
+          if 'profiles' not in data:
+              data['profiles'] = []
+
+          profiles = data['profiles']
+          if not any((p.get('username') or '').lower() == username.lower() for p in profiles):
+              profiles.append({'username': username})
+              with open('profiles.yml', 'w') as f:
+                  yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
+              print(f'Added {username} to profiles.yml')
+          else:
+              print(f'{username} already in profiles.yml')
+          PYEOF
+
+      - name: Create branch and commit
         run: |
-          git checkout -b profile/new-${{ github.event.issue.number }}
-          git add profiles/profile-${{ github.event.issue.number }}.yml
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git commit -m "Add profile from issue #${{ github.event.issue.number }}"
-          git push origin profile/new-${{ github.event.issue.number }}
+          git checkout -b "profile/$USERNAME"
+          git add "profiles/$USERNAME" profiles.yml
+          git commit -m "feat: add profile '$USERNAME' from issue #${{ github.event.issue.number }}"
+          git push origin "profile/$USERNAME"
 
       - name: Open Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: profile/new-${{ github.event.issue.number }}
-          title: "Profil-PR: Profile von Issue #${{ github.event.issue.number }}"
+          branch: profile/${{ env.USERNAME }}
+          title: "feat: add profile '${{ env.USERNAME }}' (from issue #${{ github.event.issue.number }})"
           body: |
-            Dieses Profil stammt aus [Issue #${{ github.event.issue.number }}](${{ github.event.issue.html_url }}).
+            This profile was submitted via [Issue #${{ github.event.issue.number }}](${{ github.event.issue.html_url }}).
+
+            **Username:** `${{ env.USERNAME }}`

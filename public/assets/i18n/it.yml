@@ -87,6 +87,9 @@ create:
   error_github_url: "Inserisci un URL di profilo GitHub valido (es. https://github.com/username)"
   error_nexusmods_url: "Inserisci un URL di profilo Nexus Mods valido (es. https://www.nexusmods.com/users/12345)"
   error_curseforge_url: "Inserisci un URL di profilo CurseForge valido (es. https://www.curseforge.com/members/username)"
+  submit_pr_pending: "Apertura Issue GitHub in corso…"
+  submit_pr_success: "Issue GitHub aperta! La tua PR verrà creata automaticamente."
+  submit_pr_error: "Impossibile aprire l'Issue automaticamente. Usa il pulsante qui sotto."
 
 mods:
   title: Mod

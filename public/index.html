@@ -103,6 +103,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
     /* ── Buttons ────────────────────────────────────────────────── */
@@ -676,7 +677,7 @@
 
     /* ── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      header { padding: 0 16px; }
+      header { padding: 0 12px; gap: 8px; }
       .hero  { padding: 48px 16px 40px; }
       main   { padding: 28px 14px 48px; }
       .search-input { width: 100%; }
@@ -684,6 +685,12 @@
       .toolbar { flex-direction: column; align-items: stretch; }
       .search-wrap { width: 100%; }
       .search-input { width: 100% !important; }
+      /* Hide GitHub label text – keep only the icon so the button always fits */
+      .header-github-text { display: none; }
+    }
+    @media (max-width: 400px) {
+      /* Hide language selector on very small screens to prevent overflow */
+      .lang-select { display: none; }
     }
   </style>
 </head>
@@ -698,10 +705,10 @@
   <div class="header-right">
     <select class="lang-select" id="lang-select" aria-label="Language"></select>
     <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
-    <a href="https://github.com/Smapifan/Dev-Profile" class="btn" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/Smapifan/Dev-Profile" class="btn" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
       <!-- GitHub icon -->
       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      GitHub
+      <span class="header-github-text">GitHub</span>
     </a>
   </div>
 </header>
@@ -821,7 +828,11 @@
               <div class="platform-label" data-i18n="create.field_nexusmods">Nexus Mods Profile</div>
               <div class="platform-field">
                 <span class="platform-field-icon">
-                  <img src="https://cdn.simpleicons.org/nexusmods/d98f40" alt="Nexus Mods" loading="lazy" />
+                  <!-- Nexus Mods custom SVG (not in SimpleIcons) -->
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-label="Nexus Mods" role="img" fill="none">
+                    <rect width="24" height="24" rx="3" fill="#d98f40"/>
+                    <path d="M4.5 7.5v9H6V10l3 7h1.5v-9H9v7l-3-7H4.5zm8 0l2 4 2-4H18l-2.5 4.5 2.5 4.5h-2l-2-4-2 4h-2l2.5-4.5L11 7.5h1.5z" fill="white"/>
+                  </svg>
                 </span>
                 <input type="url" id="f-nexusmods"
                        data-i18n-placeholder="create.field_nexusmods_placeholder"
@@ -915,13 +926,25 @@ let generatedData = null;
 /* ── Platform definitions ───────────────────────────────────────────── */
 const PLATFORMS = {
   github:     { label: 'GitHub',     icon: 'github',     color: '8b949e', pattern: /^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/ },
-  nexusmods:  { label: 'Nexus Mods', icon: 'nexusmods',  color: 'd98f40', pattern: /^https?:\/\/(www\.)?nexusmods\.com\/users\/\d+/ },
+  nexusmods:  { label: 'Nexus Mods', icon: null,         color: 'd98f40', pattern: /^https?:\/\/(www\.)?nexusmods\.com\/users\/\d+/ },
   curseforge: { label: 'CurseForge', icon: 'curseforge', color: 'F16436', pattern: /^https?:\/\/(www\.)?curseforge\.com\/members\/[a-zA-Z0-9_-]+/ },
   twitter:    { label: 'Twitter/X',  icon: 'x',          color: '1DA1F2', pattern: null },
   discord:    { label: 'Discord',    icon: 'discord',     color: '5865F2', pattern: null },
   youtube:    { label: 'YouTube',    icon: 'youtube',     color: 'FF0000', pattern: null },
   twitch:     { label: 'Twitch',     icon: 'twitch',      color: '9146FF', pattern: null },
   link:       { label: 'Link',       icon: null,          color: '8b949e', pattern: null },
+};
+
+/* Custom SVG data-URI icons for platforms not available on the SimpleIcons CDN */
+const PLATFORM_CUSTOM_ICONS = {
+  /* Nexus Mods: orange rounded-square with NX monogram */
+  nexusmods: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+    '<rect width="24" height="24" rx="3" fill="#d98f40"/>' +
+    '<path d="M4.5 7.5v9H6V10l3 7h1.5v-9H9v7l-3-7H4.5z ' +
+    'M12.5 7.5l2 4 2-4H18l-2.5 4.5 2.5 4.5h-2l-2-4-2 4h-2l2.5-4.5L11 7.5h1.5z" fill="white"/>' +
+    '</svg>'
+  ),
 };
 
 function detectPlatform(url) {
@@ -938,9 +961,29 @@ function detectPlatform(url) {
 }
 
 function platformIconSrc(type) {
+  if (PLATFORM_CUSTOM_ICONS[type]) return PLATFORM_CUSTOM_ICONS[type];
   const p = PLATFORMS[type] || PLATFORMS.link;
   if (!p.icon) return null;
   return `https://cdn.simpleicons.org/${p.icon}/${p.color}`;
+}
+
+/* Build an <img> with a text-abbrev onerror fallback for CDN icons */
+function platformIconImg(type, size = 16) {
+  const src = platformIconSrc(type);
+  const p   = PLATFORMS[type] || PLATFORMS.link;
+  const alt = p.label || type;
+  /* Sanitize values used in attribute strings — all come from the hardcoded PLATFORMS map but
+     defensive validation prevents issues if the map is ever extended with untrusted data */
+  const abbr  = (alt.slice(0, 2).toUpperCase().replace(/[^A-Z0-9]/g, '') || '??');
+  const color = /^[0-9a-fA-F]{3,6}$/.test(p.color) ? p.color : '8b949e';
+  if (!src) {
+    return `<span style="font-size:${Math.round(size * 0.65)}px;font-weight:700;color:#${color};line-height:1;">${abbr}</span>`;
+  }
+  /* data URIs never fail, but CDN imgs can — provide a text abbreviation fallback */
+  const fs = Math.round(size * 0.65);
+  const safeAlt = alt.replace(/['"&<>]/g, '');
+  const onErr = `this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${abbr}',title:'${safeAlt}',style:'font-size:${fs}px;font-weight:700;color:#${color};line-height:1;'}))`;
+  return `<img src="${src}" alt="${safeAlt}" width="${size}" height="${size}" loading="lazy" onerror="${onErr}" />`;
 }
 
 /* ── Extra links management ─────────────────────────────────────────── */
@@ -956,7 +999,7 @@ function addExtraLink() {
   row.innerHTML = `
     <div class="platform-field">
       <span class="platform-field-icon" id="extra-icon-${id}">
-        <img src="https://cdn.simpleicons.org/link/8b949e" alt="Link" width="16" height="16" loading="lazy" />
+        ${platformIconImg('link', 16)}
       </span>
       <input type="url" id="f-extra-${id}"
              data-i18n-placeholder="create.field_link_placeholder"
@@ -985,9 +1028,7 @@ function updateExtraIcon(id) {
   const type = detectPlatform(input.value);
   const iconContainer = document.getElementById(`extra-icon-${id}`);
   if (!iconContainer) return;
-  const src = platformIconSrc(type) || `https://cdn.simpleicons.org/link/8b949e`;
-  const img = iconContainer.querySelector('img');
-  if (img) img.src = src;
+  iconContainer.innerHTML = platformIconImg(type, 16);
 }
 
 /* ── URL validation helpers ─────────────────────────────────────────── */
@@ -1241,9 +1282,8 @@ function renderProfiles(profiles) {
       const url   = typeof s === 'string' ? s : (s.url || '');
       const plat  = PLATFORMS[type] || PLATFORMS.link;
       const label = plat.label || type;
-      const iconSrc = platformIconSrc(type) || `https://cdn.simpleicons.org/link/8b949e`;
       return `<a class="social-badge" href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="${esc(label)}" onclick="event.stopPropagation()">
-        <img src="${iconSrc}" alt="${esc(label)}" loading="lazy" />
+        ${platformIconImg(type, 12)}
         <span>${esc(label)}</span>
       </a>`;
     }).join('')}</div>` : '';

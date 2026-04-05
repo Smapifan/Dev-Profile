@@ -23,9 +23,11 @@ A modern, multilingual platform for developer profiles, powered by GitHub Action
 │   └── scripts/
 │       ├── update_mods.js         # Fetches mod data and updates mods_cache.yml
 │       ├── create_profile.js      # Creates the file structure for a new profile
-│       ├── process_uploads.js     # Indexes files in each profile's uploads/ folder
+│       └── process_uploads.js     # Indexes files in each profile's uploads/ folder
+├── public/
+│   └── assets/
 │       └── i18n/
-│           ├── en.yml             # English (required, used as fallback)
+│           ├── en.yml             # English — required, always complete
 │           ├── de.yml             # German
 │           ├── es.yml             # Spanish
 │           ├── fr.yml             # French
@@ -40,7 +42,7 @@ A modern, multilingual platform for developer profiles, powered by GitHub Action
 │       ├── uploads/               # Upload folder for this profile
 │       │   └── .gitkeep
 │       └── index.html             # Profile page (loads YAML dynamically)
-├── index.html                     # Main landing page
+├── index.html                     # Main landing page (served by GitHub Pages)
 ├── profiles.yml                   # Master list of all profiles
 └── README.md
 ```
@@ -109,13 +111,16 @@ Keys are **never** stored in the repository – only in GitHub Secrets.
 
 ## i18n / Translations
 
-All UI strings are stored in `.github/scripts/i18n/<lang>.yml`.  
-**English (`en.yml`) is required** and used as a fallback for missing keys.
+All UI strings are stored in `public/assets/i18n/<lang>.yml`.
+
+> **Key visibility:** If a translation key is missing, the raw key is shown directly in the UI (e.g., `home.badge`). This makes translation gaps immediately visible.
+
+**English (`en.yml`) is required** and loaded first. For all other languages, missing keys fall back to showing the raw key string rather than English text — so you always know what needs translating.
 
 To add a new language:
-1. Copy `en.yml` to `<lang>.yml` (use a BCP 47 language code).
+1. Copy `public/assets/i18n/en.yml` to `public/assets/i18n/<lang>.yml` (use a BCP 47 language code).
 2. Translate all values.
-3. Add the language code to `SUPPORTED_LANGS` in `index.html` and `profiles/demo/index.html`.
+3. Add the language code to `SUPPORTED_LANGS` in `index.html` and `profiles/*/index.html`.
 
 ---
 

@@ -715,52 +715,10 @@ const SUPPORTED_LANGS = ['en','de','es','fr','it','jp','cn'];
 const LANG_NAMES      = { en:'English', de:'Deutsch', es:'Español', fr:'Français', it:'Italiano', jp:'日本語', cn:'中文' };
 
 /* Built-in English fallback — used when YAML loading fails */
-const I18N_FALLBACK = {
-  lang: 'en',
-  nav: { home:'Home', profiles:'Profiles', new_profile:'Create Profile', language:'Language' },
-  home: {
-    title:'Dev Profiles', badge:'Open Source',
-    headline_1:'Discover', headline_2:'Developer', headline_3:'Profiles',
-    subtitle:'A platform for developers to showcase their mods and projects.',
-    all_profiles:'All Profiles', no_profiles:'No profiles found yet.',
-    create_first:'Be the first to create a profile!',
-    loading:'Loading profiles…', search_placeholder:'Search profiles…',
-  },
-  profile: {
-    title:"{{name}}'s Profile", bio:'Bio', skills:'Skills', socials:'Social Links',
-    projects:'Projects', mods:'Mods', uploads:'Uploads',
-    no_mods:'No mods listed yet.', no_uploads:'No uploads yet.',
-    loading_mods:'Loading mods…', loading_uploads:'Loading uploads…',
-    last_updated:'Last updated: {{date}}', edit_profile:'View Profile',
-    edit_key_prompt:'Enter your profile key', edit_key_wrong:'Incorrect key.',
-    platform_curseforge:'CurseForge', platform_nexusmods:'Nexus Mods',
-    downloads:'{{count}} downloads', rating:'Rating: {{score}}', view_mod:'View Mod',
-  },
-  create: {
-    title:'Create New Profile', subtitle:'Fill in the details to create your developer profile',
-    field_username:'Username', field_username_placeholder:'yourname',
-    field_name:'Display Name', field_name_placeholder:'Your Name',
-    field_bio:'Bio', field_bio_placeholder:'Tell us about yourself…',
-    field_skills:'Skills (comma-separated)', field_skills_placeholder:'JavaScript, Modding, Python',
-    field_socials:'Social Links (one per line)', field_socials_placeholder:'https://github.com/yourname',
-    field_language:'Preferred Language', submit:'Create Profile',
-    generating:'Generating profile…', success_title:'Profile Created!',
-    success_message:"Your profile '{{username}}' has been created.",
-    key_info:"Save this key — you'll need it to edit your profile later. It is never shown again.",
-    your_key:'Your Profile Key', copy_key:'Copy Key', copied:'Copied!',
-    error_username_taken:'This username is already taken.',
-    error_username_invalid:'Username may only contain letters, numbers, hyphens and underscores.',
-    error_required:'This field is required.',
-    download_yaml:'Download Profile YAML',
-    pr_instructions:'To add your profile, open a Pull Request with the generated YAML files.',
-  },
-  footer: { powered_by:'Powered by GitHub Actions', contribute:'Contribute on GitHub', license:'MIT License' },
-  errors: { not_found:'No results found.', load_failed:'Failed to load data.', network:'Network error. Please try again.' },
-  btn_cancel: 'Cancel',
-  btn_close: 'Close',
-};
+/* No built-in fallback — missing translations show the i18n key so gaps are immediately visible */
+const I18N_FALLBACK = {};
 
-let i18n     = I18N_FALLBACK;
+let i18n     = {};
 let allProfiles   = [];
 let generatedKey  = null;
 let generatedData = null;
@@ -774,21 +732,21 @@ function currentLang() {
 }
 
 async function loadI18n(lang) {
-  if (typeof jsyaml === 'undefined') { i18n = I18N_FALLBACK; return; } /* CDN not loaded */
+  if (typeof jsyaml === 'undefined') { i18n = {}; return; } /* CDN not loaded — keys will be shown */
   /* Validate lang against allow-list to prevent path traversal */
   const safeLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
   try {
-    const res = await fetch(`assets/i18n/${safeLang}.yml`);
+    const res = await fetch(`public/assets/i18n/${safeLang}.yml`);
     if (!res.ok) throw new Error(res.status);
-    i18n = jsyaml.load(await res.text()) || I18N_FALLBACK;
+    i18n = jsyaml.load(await res.text()) || {};
   } catch {
     if (safeLang !== 'en') {
       try {
-        const res = await fetch('assets/i18n/en.yml');
-        i18n = jsyaml.load(await res.text()) || I18N_FALLBACK;
-      } catch { i18n = I18N_FALLBACK; }
+        const res = await fetch('public/assets/i18n/en.yml');
+        i18n = jsyaml.load(await res.text()) || {};
+      } catch { i18n = {}; }
     } else {
-      i18n = I18N_FALLBACK;
+      i18n = {};
     }
   }
 }
@@ -803,21 +761,16 @@ function t(path, vars) {
 }
 
 function applyI18n() {
-  /* data-i18n elements */
+  /* data-i18n elements — always set text so missing keys are visible as raw key strings */
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (val && val !== key) el.textContent = val;
+    el.textContent = t(el.getAttribute('data-i18n'));
   });
   /* data-i18n-placeholder elements */
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    const val = t(key);
-    if (val && val !== key) el.placeholder = val;
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
   });
   /* page title */
-  const titleVal = t('home.title');
-  if (titleVal && titleVal !== 'home.title') document.title = titleVal;
+  document.title = t('home.title');
   /* html lang attribute */
   document.documentElement.lang = i18n.lang || currentLang();
 }
@@ -851,7 +804,7 @@ function toggleTheme() {
 async function loadProfiles() {
   if (typeof jsyaml === 'undefined') return [];
   try {
-    const res = await fetch('../profiles.yml');
+    const res = await fetch('profiles.yml');
     if (!res.ok) throw new Error(res.status);
     const data = jsyaml.load(await res.text()) || {};
     return Array.isArray(data.profiles) ? data.profiles : [];
@@ -861,7 +814,7 @@ async function loadProfiles() {
 async function loadProfileDetail(username) {
   if (typeof jsyaml === 'undefined') return null;
   try {
-    const res = await fetch(`../profiles/${username}/profile.yml`);
+    const res = await fetch(`profiles/${username}/profile.yml`);
     if (!res.ok) return null;
     return jsyaml.load(await res.text()) || null;
   } catch { return null; }
@@ -934,7 +887,7 @@ function renderProfiles(profiles) {
     const bio      = p.bio || '';
     const date     = p.created_at ? new Date(p.created_at).toLocaleDateString(i18n.lang || 'en') : '';
 
-    return `<a class="profile-card" href="../profiles/${esc(username)}/index.html" title="${esc(name)}">
+    return `<a class="profile-card" href="profiles/${esc(username)}/index.html" title="${esc(name)}">
       <div class="card-top">
         <div class="avatar">${esc(initial)}</div>
         <div>

@@ -1,0 +1,101 @@
+# Español – Spanish translation template
+lang: es
+lang_name: Español
+
+nav:
+  home: Inicio
+  profiles: Perfiles
+  new_profile: Crear Perfil
+  language: Idioma
+
+home:
+  title: Perfiles de Desarrolladores
+  badge: Código Abierto
+  headline_1: Descubre
+  headline_2: Perfiles de
+  headline_3: Desarrolladores
+  subtitle: Una plataforma para que los desarrolladores muestren sus mods y proyectos
+  all_profiles: Todos los Perfiles
+  no_profiles: Aún no hay perfiles.
+  create_first: ¡Sé el primero en crear un perfil!
+  loading: Cargando perfiles…
+  search_placeholder: Buscar perfiles…
+
+profile:
+  title: "Perfil de {{name}}"
+  bio: Biografía
+  skills: Habilidades
+  socials: Redes Sociales
+  projects: Proyectos
+  mods: Mods
+  uploads: Archivos
+  no_mods: Aún no hay mods listados.
+  no_uploads: Aún no hay archivos.
+  loading_mods: Cargando mods…
+  loading_uploads: Cargando archivos…
+  last_updated: "Última actualización: {{date}}"
+  edit_profile: Editar Perfil
+  edit_key_prompt: Ingresa tu clave de perfil para editar
+  edit_key_wrong: Clave incorrecta. Por favor inténtalo de nuevo.
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} descargas"
+  rating: "Calificación: {{score}}"
+  view_mod: Ver Mod
+
+create:
+  title: Crear Nuevo Perfil
+  subtitle: Completa los detalles para crear tu perfil de desarrollador
+  field_username: Nombre de usuario
+  field_username_placeholder: tunombre
+  field_name: Nombre visible
+  field_name_placeholder: Tu Nombre
+  field_bio: Biografía
+  field_bio_placeholder: Cuéntanos sobre ti…
+  field_skills: Habilidades (separadas por coma)
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: Redes sociales (una por línea)
+  field_socials_placeholder: "https://github.com/tunombre"
+  field_language: Idioma preferido
+  submit: Crear Perfil
+  generating: Generando perfil…
+  success_title: ¡Perfil Creado!
+  success_message: "Tu perfil '{{username}}' ha sido creado. Se ha iniciado un flujo de trabajo para configurar tu caché de mods."
+  key_info: "Tu clave de perfil se muestra a continuación. Guárdala – la necesitarás para editar tu perfil más tarde. No se mostrará de nuevo."
+  your_key: Tu Clave de Perfil
+  copy_key: Copiar Clave
+  copied: ¡Copiado!
+  error_username_taken: Este nombre de usuario ya está en uso.
+  error_username_invalid: El nombre de usuario solo puede contener letras, números, guiones y guiones bajos.
+  error_required: Este campo es obligatorio.
+  download_yaml: Descargar YAML del Perfil
+  pr_instructions: "Para agregar tu perfil, abre un Pull Request con los archivos YAML generados."
+
+mods:
+  title: Mods
+  loading: Cargando datos de mods…
+  error: No se pudieron cargar los datos de mods.
+  no_data: Aún no hay datos de mods disponibles. El caché se actualizará automáticamente.
+  updated_at: "Caché actualizado: {{date}}"
+
+uploads:
+  title: Archivos
+  loading: Cargando archivos…
+  error: No se pudo cargar la lista de archivos.
+  no_files: Aún no hay archivos.
+  file_name: Archivo
+  file_size: Tamaño
+  uploaded_at: Subido
+
+footer:
+  powered_by: Desarrollado con GitHub Actions
+  contribute: Contribuir en GitHub
+  license: Licencia MIT
+
+errors:
+  not_found: Página no encontrada.
+  load_failed: Error al cargar datos.
+  network: Error de red. Por favor inténtalo de nuevo.
+
+btn_cancel: Cancelar
+btn_close: Cerrar

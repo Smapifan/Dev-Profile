@@ -1,0 +1,101 @@
+# Italiano – Italian translation template
+lang: it
+lang_name: Italiano
+
+nav:
+  home: Home
+  profiles: Profili
+  new_profile: Crea Profilo
+  language: Lingua
+
+home:
+  title: Profili Sviluppatori
+  badge: Open Source
+  headline_1: Scopri
+  headline_2: i Profili
+  headline_3: degli Sviluppatori
+  subtitle: Una piattaforma per gli sviluppatori per mostrare le loro mod e progetti
+  all_profiles: Tutti i Profili
+  no_profiles: Nessun profilo ancora.
+  create_first: Sii il primo a creare un profilo!
+  loading: Caricamento profili…
+  search_placeholder: Cerca profili…
+
+profile:
+  title: "Profilo di {{name}}"
+  bio: Biografia
+  skills: Competenze
+  socials: Link Social
+  projects: Progetti
+  mods: Mod
+  uploads: File
+  no_mods: Nessuna mod elencata ancora.
+  no_uploads: Nessun file ancora.
+  loading_mods: Caricamento mod…
+  loading_uploads: Caricamento file…
+  last_updated: "Ultimo aggiornamento: {{date}}"
+  edit_profile: Modifica Profilo
+  edit_key_prompt: Inserisci la tua chiave profilo per modificare
+  edit_key_wrong: Chiave errata. Riprova.
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} download"
+  rating: "Valutazione: {{score}}"
+  view_mod: Vedi Mod
+
+create:
+  title: Crea Nuovo Profilo
+  subtitle: Compila i dettagli per creare il tuo profilo sviluppatore
+  field_username: Nome utente
+  field_username_placeholder: tuonome
+  field_name: Nome visualizzato
+  field_name_placeholder: Il Tuo Nome
+  field_bio: Biografia
+  field_bio_placeholder: Parlaci di te…
+  field_skills: Competenze (separate da virgola)
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: Link social (uno per riga)
+  field_socials_placeholder: "https://github.com/tuonome"
+  field_language: Lingua preferita
+  submit: Crea Profilo
+  generating: Creazione profilo…
+  success_title: Profilo Creato!
+  success_message: "Il tuo profilo '{{username}}' è stato creato. È stato avviato un workflow per configurare la tua cache mod."
+  key_info: "La tua chiave profilo è mostrata di seguito. Salvala – ne avrai bisogno per modificare il tuo profilo in seguito. Non verrà mostrata di nuovo."
+  your_key: La Tua Chiave Profilo
+  copy_key: Copia Chiave
+  copied: Copiato!
+  error_username_taken: Questo nome utente è già in uso.
+  error_username_invalid: Il nome utente può contenere solo lettere, numeri, trattini e underscore.
+  error_required: Questo campo è obbligatorio.
+  download_yaml: Scarica YAML Profilo
+  pr_instructions: "Per aggiungere il tuo profilo, apri una Pull Request con i file YAML generati."
+
+mods:
+  title: Mod
+  loading: Caricamento dati mod…
+  error: Impossibile caricare i dati mod.
+  no_data: Nessun dato mod disponibile ancora. La cache verrà aggiornata automaticamente.
+  updated_at: "Cache aggiornata: {{date}}"
+
+uploads:
+  title: File
+  loading: Caricamento file…
+  error: Impossibile caricare la lista file.
+  no_files: Nessun file ancora.
+  file_name: File
+  file_size: Dimensione
+  uploaded_at: Caricato
+
+footer:
+  powered_by: Powered by GitHub Actions
+  contribute: Contribuisci su GitHub
+  license: Licenza MIT
+
+errors:
+  not_found: Pagina non trovata.
+  load_failed: Caricamento dati fallito.
+  network: Errore di rete. Riprova.
+
+btn_cancel: Annulla
+btn_close: Chiudi

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Developer Profiles — a platform for developers to showcase their mods and projects." />
+  <title>Dev Profiles</title>
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-card: 0 2px 12px rgba(0,0,0,.18);
+      --transition: .18s ease;
+    }
+
+    [data-theme="dark"] {
+      --bg:        #0d1117;
+      --bg2:       #111620;
+      --card:      #161b22;
+      --card-hover:#1c2330;
+      --border:    #30363d;
+      --text:      #e6edf3;
+      --text-muted:#8b949e;
+      --accent:    #58a6ff;
+      --accent-dim:#1f3a5f;
+      --green:     #3fb950;
+      --red:       #f85149;
+      --tag-bg:    #21262d;
+      --tag-text:  #79c0ff;
+      --input-bg:  #0d1117;
+      --overlay:   rgba(1,4,9,.75);
+    }
+
+    [data-theme="light"] {
+      --bg:        #f6f8fa;
+      --bg2:       #ffffff;
+      --card:      #ffffff;
+      --card-hover:#f0f4f8;
+      --border:    #d0d7de;
+      --text:      #1f2328;
+      --text-muted:#57606a;
+      --accent:    #0969da;
+      --accent-dim:#ddf4ff;
+      --green:     #1a7f37;
+      --red:       #cf222e;
+      --tag-bg:    #ddf4ff;
+      --tag-text:  #0550ae;
+      --input-bg:  #ffffff;
+      --overlay:   rgba(0,0,0,.45);
+    }
+
+    /* ── Reset ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background var(--transition), color var(--transition);
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Scroll bar ─────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .brand-icon { font-size: 1.3rem; }
+    .brand em { color: var(--accent); font-style: normal; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: background var(--transition), border-color var(--transition), opacity var(--transition);
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--card-hover); }
+    .btn:active { opacity: .8; }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+    [data-theme="light"] .btn-primary { color: #fff; }
+    .btn-primary:hover { opacity: .88; background: var(--accent); }
+
+    .btn-icon {
+      padding: 6px 10px;
+      font-size: 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition);
+      line-height: 1;
+    }
+    .btn-icon:hover { background: var(--card-hover); }
+
+    /* ── Lang select ────────────────────────────────────────────── */
+    .lang-select {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .lang-select:focus { outline: none; border-color: var(--accent); }
+
+    /* ── Hero ───────────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 72px 20px 56px;
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: .3px;
+    }
+    .hero h1 {
+      font-size: clamp(1.9rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -.5px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 .accent { color: var(--accent); }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      max-width: 580px;
+      margin: 0 auto 32px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-actions .btn { padding: 10px 22px; font-size: 0.95rem; }
+
+    /* ── Main layout ────────────────────────────────────────────── */
+    main { max-width: 1140px; margin: 0 auto; padding: 40px 20px 60px; }
+
+    /* ── Toolbar ────────────────────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title .count {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 20px;
+      padding: 1px 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .search-wrap { position: relative; }
+    .search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-input {
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px 8px 34px;
+      font-size: 0.88rem;
+      width: 260px;
+      max-width: 100%;
+      outline: none;
+      transition: border-color var(--transition), width var(--transition);
+    }
+    .search-input:focus { border-color: var(--accent); width: 300px; }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    /* ── Profile grid ───────────────────────────────────────────── */
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
+      gap: 20px;
+    }
+
+    .profile-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition), background var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .profile-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(88,166,255,.12);
+      transform: translateY(-2px);
+      background: var(--card-hover);
+    }
+    .profile-card:hover::before { opacity: 1; }
+
+    .card-top { display: flex; align-items: center; gap: 14px; }
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #a371f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(88,166,255,.3);
+    }
+    .card-name { font-size: 1rem; font-weight: 700; margin-bottom: 2px; }
+    .card-username { color: var(--text-muted); font-size: 0.83rem; }
+    .card-bio {
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .tag {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: background var(--transition);
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+    .card-footer-link {
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── Empty state ────────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 3.5rem; margin-bottom: 16px; opacity: .6; }
+    .empty-state h3 { font-size: 1.15rem; margin-bottom: 8px; color: var(--text); }
+    .empty-state p { font-size: 0.9rem; margin-bottom: 24px; }
+
+    /* ── Skeleton loader ────────────────────────────────────────── */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--radius-sm);
+    }
+    .skeleton-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .skel-top { display: flex; gap: 14px; align-items: center; }
+    .skel-avatar { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; }
+    .skel-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skel-line { height: 12px; }
+    .skel-short { width: 55%; }
+    .skel-bio { height: 10px; }
+    .skel-bio-2 { width: 75%; }
+    .skel-tags { display: flex; gap: 5px; }
+    .skel-tag { width: 56px; height: 20px; border-radius: 20px; }
+
+    /* ── Modal ──────────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(3px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 540px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-card);
+      animation: modalIn .18s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(12px) scale(.97); }
+      to   { opacity: 1; transform: none; }
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      z-index: 1;
+    }
+    .modal-header h2 { font-size: 1.05rem; font-weight: 700; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+    }
+    .modal-close:hover { color: var(--text); background: var(--card-hover); }
+
+    .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.83rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .form-group label .req { color: var(--red); margin-left: 3px; }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color var(--transition);
+      width: 100%;
+      font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; }
+    .form-error { color: var(--red); font-size: 0.8rem; display: none; }
+    .form-hint  { color: var(--text-muted); font-size: 0.8rem; }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    /* ── Success step ───────────────────────────────────────────── */
+    .success-step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 36px 24px;
+      text-align: center;
+    }
+    .success-step.open { display: flex; }
+    .success-icon { font-size: 3.5rem; }
+    .success-step h3 { font-size: 1.2rem; font-weight: 700; }
+    .success-step p  { color: var(--text-muted); font-size: 0.9rem; max-width: 400px; }
+    .key-card {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--green);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+    .key-label { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 8px; }
+    .key-value {
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+      font-size: 0.95rem;
+      color: var(--green);
+      letter-spacing: 1.5px;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+    .success-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 28px 20px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); }
+    footer a:hover { text-decoration: underline; }
+    .footer-sep { margin: 0 8px; opacity: .4; }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-card);
+      z-index: 300;
+      display: none;
+      gap: 8px;
+      align-items: center;
+      max-width: 320px;
+      animation: toastIn .2s ease;
+    }
+    .toast.show { display: flex; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .toast-icon { font-size: 1.1rem; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      header { padding: 0 16px; }
+      .hero  { padding: 48px 16px 40px; }
+      main   { padding: 28px 14px 48px; }
+      .search-input { width: 100%; }
+      .search-input:focus { width: 100%; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-wrap { width: 100%; }
+      .search-input { width: 100% !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────── -->
+<header>
+  <div class="brand">
+    <span class="brand-icon">🧑‍💻</span>
+    Dev<em>Profiles</em>
+  </div>
+  <div class="header-right">
+    <select class="lang-select" id="lang-select" aria-label="Language"></select>
+    <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+    <a href="https://github.com/Smapifan/Dev-Profile" class="btn" target="_blank" rel="noopener noreferrer">
+      <!-- GitHub icon -->
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">✨ <span data-i18n="home.badge">Open Source</span></div>
+  <h1>
+    <span data-i18n="home.headline_1">Discover</span>
+    <span class="accent"> <span data-i18n="home.headline_2">Developer</span> </span>
+    <span data-i18n="home.headline_3">Profiles</span>
+  </h1>
+  <p class="hero-sub" data-i18n="home.subtitle">A platform for developers to showcase their mods and projects.</p>
+  <div class="hero-actions">
+    <button class="btn btn-primary" id="btn-create-hero" onclick="openCreateModal()">
+      ✦ <span data-i18n="nav.new_profile">Create Profile</span>
+    </button>
+    <a href="https://github.com/Smapifan/Dev-Profile" class="btn" target="_blank" rel="noopener noreferrer" data-i18n="footer.contribute">Contribute on GitHub</a>
+  </div>
+</section>
+
+<!-- ── Main ───────────────────────────────────────────────────────────────── -->
+<main>
+  <div class="toolbar">
+    <div class="section-title">
+      <span data-i18n="home.all_profiles">All Profiles</span>
+      <span class="count" id="profile-count"></span>
+    </div>
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11l3 3"/></svg>
+      <input
+        class="search-input"
+        type="search"
+        id="search-input"
+        data-i18n-placeholder="home.search_placeholder"
+        placeholder="Search profiles…"
+        oninput="filterProfiles()"
+        aria-label="Search profiles"
+      />
+    </div>
+  </div>
+
+  <div id="profiles-container"></div>
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <span data-i18n="footer.powered_by">Powered by GitHub Actions</span>
+  <span class="footer-sep">·</span>
+  <a href="https://github.com/Smapifan/Dev-Profile" target="_blank" rel="noopener noreferrer" data-i18n="footer.contribute">Contribute on GitHub</a>
+  <span class="footer-sep">·</span>
+  <span data-i18n="footer.license">MIT License</span>
+</footer>
+
+<!-- ── Toast ──────────────────────────────────────────────────────────────── -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="toast-icon" id="toast-icon"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- ── Create Profile Modal ───────────────────────────────────────────────── -->
+<div class="modal-overlay" id="create-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-heading" data-i18n="create.title">Create New Profile</h2>
+      <button class="modal-close" onclick="closeCreateModal()" aria-label="Close">×</button>
+    </div>
+
+    <!-- Form step -->
+    <div id="form-step">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="f-username"><span data-i18n="create.field_username">Username</span><span class="req">*</span></label>
+          <input type="text" id="f-username" maxlength="40" autocomplete="off"
+                 data-i18n-placeholder="create.field_username_placeholder"
+                 placeholder="yourname" />
+          <span class="form-error" id="err-username"></span>
+        </div>
+        <div class="form-group">
+          <label for="f-name"><span data-i18n="create.field_name">Display Name</span><span class="req">*</span></label>
+          <input type="text" id="f-name"
+                 data-i18n-placeholder="create.field_name_placeholder"
+                 placeholder="Your Name" />
+          <span class="form-error" id="err-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="f-bio"><span data-i18n="create.field_bio">Bio</span></label>
+          <textarea id="f-bio" rows="3"
+                    data-i18n-placeholder="create.field_bio_placeholder"
+                    placeholder="Tell us about yourself…"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="f-skills"><span data-i18n="create.field_skills">Skills (comma-separated)</span></label>
+          <input type="text" id="f-skills"
+                 data-i18n-placeholder="create.field_skills_placeholder"
+                 placeholder="JavaScript, Modding, Python" />
+        </div>
+        <div class="form-group">
+          <label for="f-socials"><span data-i18n="create.field_socials">Social Links (one per line)</span></label>
+          <textarea id="f-socials" rows="3"
+                    data-i18n-placeholder="create.field_socials_placeholder"
+                    placeholder="https://github.com/yourname"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="f-language"><span data-i18n="create.field_language">Preferred Language</span></label>
+          <select id="f-language"></select>
+        </div>
+        <p class="form-hint" data-i18n="create.pr_instructions">
+          After submitting, download your profile YAML files and open a Pull Request to add them to the repository.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeCreateModal()" data-i18n="btn_cancel">Cancel</button>
+        <button class="btn btn-primary" onclick="handleCreate()" id="btn-submit" data-i18n="create.submit">Create Profile</button>
+      </div>
+    </div>
+
+    <!-- Success step -->
+    <div class="success-step" id="success-step">
+      <div class="success-icon">🎉</div>
+      <h3 data-i18n="create.success_title">Profile Created!</h3>
+      <p id="success-msg"></p>
+      <div class="key-card">
+        <div class="key-label" data-i18n="create.key_info">
+          Save this key — you'll need it to edit your profile later. It is never shown again.
+        </div>
+        <div class="key-value" id="key-value"></div>
+        <button class="btn" id="btn-copy-key" onclick="copyKey()" data-i18n="create.copy_key">Copy Key</button>
+      </div>
+      <div class="success-actions">
+        <button class="btn btn-primary" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
+        <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
+      </div>
+      <p class="form-hint" data-i18n="create.pr_instructions">Open a Pull Request with your YAML files to publish your profile.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+<script>
+/* ── State ─────────────────────────────────────────────────────────── */
+const SUPPORTED_LANGS = ['en','de','es','fr','it','jp','cn'];
+const LANG_NAMES      = { en:'English', de:'Deutsch', es:'Español', fr:'Français', it:'Italiano', jp:'日本語', cn:'中文' };
+
+/* Built-in English fallback — used when YAML loading fails */
+const I18N_FALLBACK = {
+  lang: 'en',
+  nav: { home:'Home', profiles:'Profiles', new_profile:'Create Profile', language:'Language' },
+  home: {
+    title:'Dev Profiles', badge:'Open Source',
+    headline_1:'Discover', headline_2:'Developer', headline_3:'Profiles',
+    subtitle:'A platform for developers to showcase their mods and projects.',
+    all_profiles:'All Profiles', no_profiles:'No profiles found yet.',
+    create_first:'Be the first to create a profile!',
+    loading:'Loading profiles…', search_placeholder:'Search profiles…',
+  },
+  profile: {
+    title:"{{name}}'s Profile", bio:'Bio', skills:'Skills', socials:'Social Links',
+    projects:'Projects', mods:'Mods', uploads:'Uploads',
+    no_mods:'No mods listed yet.', no_uploads:'No uploads yet.',
+    loading_mods:'Loading mods…', loading_uploads:'Loading uploads…',
+    last_updated:'Last updated: {{date}}', edit_profile:'View Profile',
+    edit_key_prompt:'Enter your profile key', edit_key_wrong:'Incorrect key.',
+    platform_curseforge:'CurseForge', platform_nexusmods:'Nexus Mods',
+    downloads:'{{count}} downloads', rating:'Rating: {{score}}', view_mod:'View Mod',
+  },
+  create: {
+    title:'Create New Profile', subtitle:'Fill in the details to create your developer profile',
+    field_username:'Username', field_username_placeholder:'yourname',
+    field_name:'Display Name', field_name_placeholder:'Your Name',
+    field_bio:'Bio', field_bio_placeholder:'Tell us about yourself…',
+    field_skills:'Skills (comma-separated)', field_skills_placeholder:'JavaScript, Modding, Python',
+    field_socials:'Social Links (one per line)', field_socials_placeholder:'https://github.com/yourname',
+    field_language:'Preferred Language', submit:'Create Profile',
+    generating:'Generating profile…', success_title:'Profile Created!',
+    success_message:"Your profile '{{username}}' has been created.",
+    key_info:"Save this key — you'll need it to edit your profile later. It is never shown again.",
+    your_key:'Your Profile Key', copy_key:'Copy Key', copied:'Copied!',
+    error_username_taken:'This username is already taken.',
+    error_username_invalid:'Username may only contain letters, numbers, hyphens and underscores.',
+    error_required:'This field is required.',
+    download_yaml:'Download Profile YAML',
+    pr_instructions:'To add your profile, open a Pull Request with the generated YAML files.',
+  },
+  footer: { powered_by:'Powered by GitHub Actions', contribute:'Contribute on GitHub', license:'MIT License' },
+  errors: { not_found:'No results found.', load_failed:'Failed to load data.', network:'Network error. Please try again.' },
+  btn_cancel: 'Cancel',
+  btn_close: 'Close',
+};
+
+let i18n     = I18N_FALLBACK;
+let allProfiles   = [];
+let generatedKey  = null;
+let generatedData = null;
+
+/* ── i18n ──────────────────────────────────────────────────────────── */
+function currentLang() {
+  const stored = localStorage.getItem('devprofile_lang');
+  if (stored && SUPPORTED_LANGS.includes(stored)) return stored;
+  const nav = (navigator.language || 'en').slice(0,2).toLowerCase();
+  return SUPPORTED_LANGS.includes(nav) ? nav : 'en';
+}
+
+async function loadI18n(lang) {
+  if (typeof jsyaml === 'undefined') return; /* CDN not loaded, use fallback */
+  try {
+    const res = await fetch(`assets/i18n/${lang}.yml`);
+    if (!res.ok) throw new Error(res.status);
+    i18n = jsyaml.load(await res.text()) || I18N_FALLBACK;
+  } catch {
+    if (lang !== 'en') {
+      try {
+        const res = await fetch('assets/i18n/en.yml');
+        i18n = jsyaml.load(await res.text()) || I18N_FALLBACK;
+      } catch { i18n = I18N_FALLBACK; }
+    } else {
+      i18n = I18N_FALLBACK;
+    }
+  }
+}
+
+function t(path, vars) {
+  const keys = path.split('.');
+  let v = i18n;
+  for (const k of keys) { v = v && v[k]; }
+  if (v == null) return path;
+  if (vars) for (const [k,val] of Object.entries(vars)) v = v.replaceAll(`{{${k}}}`, val);
+  return v;
+}
+
+function applyI18n() {
+  /* data-i18n elements */
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val && val !== key) el.textContent = val;
+  });
+  /* data-i18n-placeholder elements */
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    const val = t(key);
+    if (val && val !== key) el.placeholder = val;
+  });
+  /* page title */
+  const titleVal = t('home.title');
+  if (titleVal && titleVal !== 'home.title') document.title = titleVal;
+  /* html lang attribute */
+  document.documentElement.lang = i18n.lang || currentLang();
+}
+
+function buildLangSelect(selectId, current) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  sel.innerHTML = SUPPORTED_LANGS
+    .map(l => `<option value="${l}"${l === current ? ' selected' : ''}>${LANG_NAMES[l]}</option>`)
+    .join('');
+}
+
+/* ── Theme ──────────────────────────────────────────────────────────── */
+function currentTheme() {
+  return localStorage.getItem('devprofile_theme') || 'dark';
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-toggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+  document.getElementById('theme-toggle').title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+}
+
+function toggleTheme() {
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('devprofile_theme', next);
+  applyTheme(next);
+}
+
+/* ── Profile loading ────────────────────────────────────────────────── */
+async function loadProfiles() {
+  if (typeof jsyaml === 'undefined') return [];
+  try {
+    const res = await fetch('../profiles.yml');
+    if (!res.ok) throw new Error(res.status);
+    const data = jsyaml.load(await res.text()) || {};
+    return Array.isArray(data.profiles) ? data.profiles : [];
+  } catch { return []; }
+}
+
+async function loadProfileDetail(username) {
+  if (typeof jsyaml === 'undefined') return null;
+  try {
+    const res = await fetch(`../profiles/${username}/profile.yml`);
+    if (!res.ok) return null;
+    return jsyaml.load(await res.text()) || null;
+  } catch { return null; }
+}
+
+async function enrichProfiles(list) {
+  return Promise.all(list.map(async p => {
+    const username = typeof p === 'string' ? p : p.username;
+    const detail = await loadProfileDetail(username);
+    return detail || (typeof p === 'string' ? { username: p, name: p } : p);
+  }));
+}
+
+/* ── Render ─────────────────────────────────────────────────────────── */
+function renderSkeletons(n = 6) {
+  document.getElementById('profiles-container').innerHTML =
+    `<div class="profiles-grid">${
+      Array.from({ length: n }, () => `
+        <div class="skeleton-card">
+          <div class="skel-top">
+            <div class="skeleton skel-avatar"></div>
+            <div class="skel-lines">
+              <div class="skeleton skel-line"></div>
+              <div class="skeleton skel-line skel-short"></div>
+            </div>
+          </div>
+          <div class="skeleton skel-bio"></div>
+          <div class="skeleton skel-bio skel-bio-2"></div>
+          <div class="skel-tags">
+            <div class="skeleton skel-tag"></div>
+            <div class="skeleton skel-tag"></div>
+            <div class="skeleton skel-tag"></div>
+          </div>
+        </div>`).join('')
+    }</div>`;
+}
+
+function renderProfiles(profiles) {
+  const container = document.getElementById('profiles-container');
+  const query = (document.getElementById('search-input').value || '').toLowerCase().trim();
+
+  const filtered = profiles.filter(p => {
+    if (!query) return true;
+    return (
+      (p.name     || '').toLowerCase().includes(query) ||
+      (p.username || '').toLowerCase().includes(query) ||
+      (p.bio      || '').toLowerCase().includes(query) ||
+      ((p.skills  || []).join(' ')).toLowerCase().includes(query)
+    );
+  });
+
+  document.getElementById('profile-count').textContent = filtered.length;
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${query ? '🔍' : '🌱'}</div>
+        <h3>${esc(query ? t('errors.not_found') || 'No results found' : t('home.no_profiles'))}</h3>
+        <p>${esc(query ? '' : t('home.create_first'))}</p>
+        ${!query ? `<button class="btn btn-primary" onclick="openCreateModal()">✦ ${esc(t('nav.new_profile'))}</button>` : ''}
+      </div>`;
+    return;
+  }
+
+  const cards = filtered.map(p => {
+    const username = p.username || '';
+    const name     = p.name || username;
+    const initial  = name[0] ? name[0].toUpperCase() : '?';
+    const skills   = (p.skills || []).slice(0, 5);
+    const bio      = p.bio || '';
+    const date     = p.created_at ? new Date(p.created_at).toLocaleDateString(i18n.lang || 'en') : '';
+
+    return `<a class="profile-card" href="../profiles/${esc(username)}/index.html" title="${esc(name)}">
+      <div class="card-top">
+        <div class="avatar">${esc(initial)}</div>
+        <div>
+          <div class="card-name">${esc(name)}</div>
+          <div class="card-username">@${esc(username)}</div>
+        </div>
+      </div>
+      ${bio ? `<div class="card-bio">${esc(bio)}</div>` : ''}
+      ${skills.length ? `<div class="tags">${skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>` : ''}
+      <div class="card-footer">
+        <span>${date ? `${esc(t('profile.last_updated').replace('{{date}}', date))}` : ''}</span>
+        <span class="card-footer-link">${esc(t('profile.edit_profile') || 'View')} →</span>
+      </div>
+    </a>`;
+  }).join('');
+
+  container.innerHTML = `<div class="profiles-grid">${cards}</div>`;
+}
+
+function filterProfiles() { renderProfiles(allProfiles); }
+
+/* ── Create modal ───────────────────────────────────────────────────── */
+function openCreateModal() {
+  document.getElementById('create-modal').classList.add('open');
+  document.getElementById('form-step').style.display = '';
+  document.getElementById('success-step').classList.remove('open');
+  clearErrors();
+  document.getElementById('f-username').focus();
+}
+
+function closeCreateModal() {
+  document.getElementById('create-modal').classList.remove('open');
+}
+
+function clearErrors() {
+  document.querySelectorAll('.form-error').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+async function generateKey() {
+  const arr = new Uint8Array(20);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function sha256(msg) {
+  const buf  = new TextEncoder().encode(msg);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function handleCreate() {
+  clearErrors();
+  const username = document.getElementById('f-username').value.trim();
+  const name     = document.getElementById('f-name').value.trim();
+  const bio      = document.getElementById('f-bio').value.trim();
+  const skills   = document.getElementById('f-skills').value.split(',').map(s => s.trim()).filter(Boolean);
+  const socials  = document.getElementById('f-socials').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const language = document.getElementById('f-language').value;
+
+  let valid = true;
+  if (!username) { showError('err-username', t('create.error_required')); valid = false; }
+  else if (!/^[a-zA-Z0-9_-]{1,40}$/.test(username)) { showError('err-username', t('create.error_username_invalid')); valid = false; }
+  if (!name) { showError('err-name', t('create.error_required')); valid = false; }
+  if (!valid) return;
+
+  const taken = allProfiles.map(p => (p.username || '').toLowerCase());
+  if (taken.includes(username.toLowerCase())) {
+    showError('err-username', t('create.error_username_taken'));
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = t('create.generating') || 'Generating…';
+
+  const key     = await generateKey();
+  const keyHash = await sha256(key);
+
+  generatedKey  = key;
+  generatedData = { username, name, bio, skills, socials, projects: [], language, key_hash: keyHash, created_at: new Date().toISOString() };
+
+  btn.disabled = false;
+  btn.textContent = t('create.submit');
+
+  document.getElementById('form-step').style.display = 'none';
+  const ss = document.getElementById('success-step');
+  ss.classList.add('open');
+  document.getElementById('success-msg').textContent  = t('create.success_message', { username });
+  document.getElementById('key-value').textContent    = key;
+}
+
+async function copyKey() {
+  if (!generatedKey) return;
+  try {
+    await navigator.clipboard.writeText(generatedKey);
+    const btn = document.getElementById('btn-copy-key');
+    const orig = btn.textContent;
+    btn.textContent = t('create.copied') || 'Copied!';
+    showToast('✅', t('create.copied') || 'Copied to clipboard!');
+    setTimeout(() => { btn.textContent = orig; }, 2200);
+  } catch {
+    showToast('❌', t('errors.network') || 'Copy failed');
+  }
+}
+
+function downloadYaml() {
+  if (!generatedData) return;
+  const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
+  const modsYaml    = `# Add your mods here.\n# Format: { nexusmods: "gameSlug/modId" } or { curseforge: projectId }\n`;
+  const cacheYaml   = jsyaml.dump({ profile: generatedData.username, updated_at: new Date().toISOString(), mods: [] });
+
+  [
+    [profileYaml, 'profile.yml'],
+    [modsYaml,    'mods.yml'],
+    [cacheYaml,   'mods_cache.yml'],
+  ].forEach(([content, name], i) => {
+    setTimeout(() => dlBlob(content, name), i * 350);
+  });
+}
+
+function dlBlob(content, name) {
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([content], { type: 'text/yaml' })),
+    download: name,
+  });
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ── Toast ──────────────────────────────────────────────────────────── */
+let toastTimer;
+function showToast(icon, msg, ms = 3000) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent  = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), ms);
+}
+
+/* ── Helpers ────────────────────────────────────────────────────────── */
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* ── Init ───────────────────────────────────────────────────────────── */
+async function init() {
+  /* theme */
+  applyTheme(currentTheme());
+  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+  /* i18n */
+  const lang = currentLang();
+  await loadI18n(lang);
+  buildLangSelect('lang-select', lang);
+  buildLangSelect('f-language', lang);
+  applyI18n();
+
+  /* lang switcher */
+  document.getElementById('lang-select').addEventListener('change', async function() {
+    const l = this.value;
+    localStorage.setItem('devprofile_lang', l);
+    await loadI18n(l);
+    buildLangSelect('f-language', l);
+    applyI18n();
+    renderProfiles(allProfiles);
+  });
+
+  /* profiles */
+  renderSkeletons();
+  const list = await loadProfiles();
+  allProfiles = await enrichProfiles(list);
+  document.getElementById('profile-count').textContent = allProfiles.length;
+  renderProfiles(allProfiles);
+
+  /* close modal on overlay click */
+  document.getElementById('create-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeCreateModal();
+  });
+
+  /* close modal on Escape */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeCreateModal();
+  });
+}
+
+init();
+</script>
+</body>
+</html>

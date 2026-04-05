@@ -26,9 +26,18 @@ jobs:
 
           # Extract username from YAML
           USERNAME=$(python3 -c "
-          import yaml, sys
-          data = yaml.safe_load(open('/tmp/profile.yml').read()) or {}
-          print(data.get('username', ''))
+          import yaml, sys, re
+          try:
+              data = yaml.safe_load(open('/tmp/profile.yml').read()) or {}
+              username = str(data.get('username', ''))
+              # Sanitize: only allow alphanumeric, hyphens, underscores (max 40 chars)
+              if re.fullmatch(r'[a-zA-Z0-9_-]{1,40}', username):
+                  print(username)
+              else:
+                  print('')
+          except Exception as e:
+              sys.stderr.write(f'Failed to parse profile YAML: {e}\n')
+              print('')
           ")
 
           if [ -z "$USERNAME" ]; then

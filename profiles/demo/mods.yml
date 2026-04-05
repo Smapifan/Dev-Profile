@@ -1,0 +1,9 @@
+# Demo profile mod list
+# Supported platforms: nexusmods, curseforge
+#
+# Nexus Mods format: "gameSlug/modId"
+# CurseForge format: project ID number
+#
+# Examples (these are placeholder IDs):
+# - nexusmods: skyrim/12345
+# - curseforge: 123456

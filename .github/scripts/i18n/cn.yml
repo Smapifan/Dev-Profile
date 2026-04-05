@@ -1,0 +1,94 @@
+# 中文 – Chinese translation template
+lang: cn
+lang_name: 中文
+
+nav:
+  home: 首页
+  profiles: 个人资料
+  new_profile: 创建资料
+  language: 语言
+
+home:
+  title: 开发者资料
+  subtitle: 一个供开发者展示模组和项目的平台
+  all_profiles: 所有资料
+  no_profiles: 暂无资料。
+  create_first: 成为第一个创建资料的人！
+  loading: 正在加载资料…
+  search_placeholder: 搜索资料…
+
+profile:
+  title: "{{name}} 的资料"
+  bio: 个人简介
+  skills: 技能
+  socials: 社交链接
+  projects: 项目
+  mods: 模组
+  uploads: 上传文件
+  no_mods: 暂无模组。
+  no_uploads: 暂无上传文件。
+  loading_mods: 正在加载模组…
+  loading_uploads: 正在加载上传文件…
+  last_updated: "最后更新: {{date}}"
+  edit_profile: 编辑资料
+  edit_key_prompt: 请输入您的资料密钥以进行编辑
+  edit_key_wrong: 密钥错误，请重试。
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} 次下载"
+  rating: "评分: {{score}}"
+  view_mod: 查看模组
+
+create:
+  title: 创建新资料
+  subtitle: 填写详细信息以创建您的开发者资料
+  field_username: 用户名
+  field_username_placeholder: yourname
+  field_name: 显示名称
+  field_name_placeholder: 您的姓名
+  field_bio: 个人简介
+  field_bio_placeholder: 介绍一下自己…
+  field_skills: 技能（用逗号分隔）
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: 社交链接（每行一个）
+  field_socials_placeholder: "https://github.com/yourname"
+  field_language: 首选语言
+  submit: 创建资料
+  generating: 正在生成资料…
+  success_title: 资料已创建！
+  success_message: "您的资料 '{{username}}' 已创建。已触发工作流程来设置您的模组缓存。"
+  key_info: "您的资料密钥显示如下。请保存它 – 您以后编辑资料时需要它。它不会再次显示。"
+  your_key: 您的资料密钥
+  copy_key: 复制密钥
+  copied: 已复制！
+  error_username_taken: 此用户名已被使用。
+  error_username_invalid: 用户名只能包含字母、数字、连字符和下划线。
+  error_required: 此字段为必填项。
+  download_yaml: 下载资料 YAML
+  pr_instructions: "要添加您的资料，请使用生成的 YAML 文件开启 Pull Request。"
+
+mods:
+  title: 模组
+  loading: 正在加载模组数据…
+  error: 无法加载模组数据。
+  no_data: 暂无模组数据。缓存将自动更新。
+  updated_at: "缓存更新时间: {{date}}"
+
+uploads:
+  title: 上传文件
+  loading: 正在加载上传文件…
+  error: 无法加载文件列表。
+  no_files: 暂无上传文件。
+  file_name: 文件名
+  file_size: 大小
+  uploaded_at: 上传时间
+
+footer:
+  powered_by: 由 GitHub Actions 提供支持
+  contribute: 在 GitHub 上贡献
+  license: MIT 许可证
+
+errors:
+  not_found: 页面未找到。
+  load_failed: 数据加载失败。
+  network: 网络错误，请重试。

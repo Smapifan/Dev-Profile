@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Profile</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --red: #f85149;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; min-height: 100vh; }
+    header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    header a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 1.1rem; }
+    header a:hover { text-decoration: underline; }
+    nav { display: flex; gap: 16px; align-items: center; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    nav a:hover { color: var(--text); }
+    select { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.85rem; cursor: pointer; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 16px; }
+    .profile-header { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 32px; }
+    .profile-avatar { width: 96px; height: 96px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--bg); flex-shrink: 0; }
+    .profile-info h1 { font-size: 1.8rem; margin-bottom: 6px; }
+    .profile-info .username { color: var(--muted); margin-bottom: 10px; font-size: 1rem; }
+    .profile-info .bio { color: var(--text); margin-bottom: 12px; line-height: 1.6; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { background: var(--card); border: 1px solid var(--border); color: var(--accent); border-radius: 20px; padding: 3px 12px; font-size: 0.8rem; }
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+    .section-header { padding: 14px 20px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .section-body { padding: 16px 20px; }
+    .socials-list { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; }
+    .socials-list a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+    .socials-list a:hover { text-decoration: underline; }
+    .mod-list { display: grid; gap: 12px; }
+    .mod-card { border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; background: var(--bg); }
+    .mod-card h3 { margin-bottom: 4px; font-size: 1rem; }
+    .mod-card .mod-meta { color: var(--muted); font-size: 0.82rem; margin-bottom: 6px; }
+    .mod-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .mod-card a { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+    .mod-card a:hover { text-decoration: underline; }
+    .upload-list { list-style: none; }
+    .upload-list li { padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+    .upload-list li:last-child { border-bottom: none; }
+    .upload-list .file-meta { color: var(--muted); font-size: 0.8rem; }
+    .muted { color: var(--muted); font-size: 0.9rem; padding: 12px 0; }
+    .badge { font-size: 0.75rem; border-radius: 12px; padding: 2px 10px; }
+    .badge-nexus { background: #1a1a2e; color: #58a6ff; border: 1px solid #30363d; }
+    .badge-curseforge { background: #2d1b00; color: #f0883e; border: 1px solid #30363d; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 0.9rem; text-decoration: none; transition: background 0.2s; }
+    .btn:hover { background: var(--border); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #000; }
+    .btn-primary:hover { opacity: 0.85; }
+    .last-updated { color: var(--muted); font-size: 0.8rem; }
+    .edit-form { display: none; flex-direction: column; gap: 12px; margin-top: 16px; }
+    .edit-form input, .edit-form textarea { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 0.9rem; width: 100%; }
+    .edit-form label { font-size: 0.85rem; color: var(--muted); margin-bottom: 2px; display: block; }
+    .key-input { font-family: monospace; letter-spacing: 1px; }
+    footer { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
+    footer a { color: var(--accent); text-decoration: none; }
+    @media (max-width: 600px) {
+      .profile-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="../../index.html" id="nav-home">← Dev Profiles</a>
+  <nav>
+    <a href="../../index.html" id="nav-all-profiles">All Profiles</a>
+    <select id="lang-select" title="Language" aria-label="Language"></select>
+  </nav>
+</header>
+
+<main>
+  <div class="profile-header">
+    <div class="profile-avatar" id="profile-avatar">?</div>
+    <div class="profile-info">
+      <h1 id="profile-name">Loading…</h1>
+      <div class="username" id="profile-username"></div>
+      <p class="bio" id="profile-bio"></p>
+      <div class="tags" id="profile-skills"></div>
+    </div>
+  </div>
+
+  <!-- Socials -->
+  <div class="section" id="section-socials" style="display:none">
+    <div class="section-header" id="label-socials">Social Links</div>
+    <div class="section-body">
+      <ul class="socials-list" id="socials-list"></ul>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div class="section" id="section-projects" style="display:none">
+    <div class="section-header" id="label-projects">Projects</div>
+    <div class="section-body">
+      <div class="tags" id="projects-list"></div>
+    </div>
+  </div>
+
+  <!-- Mods -->
+  <div class="section">
+    <div class="section-header">
+      <span id="label-mods">Mods</span>
+      <span class="last-updated" id="mods-updated"></span>
+    </div>
+    <div class="section-body">
+      <div class="mod-list" id="mod-list"><p class="muted" id="label-loading-mods">Loading mods…</p></div>
+    </div>
+  </div>
+
+  <!-- Uploads -->
+  <div class="section">
+    <div class="section-header" id="label-uploads">Uploads</div>
+    <div class="section-body">
+      <ul class="upload-list" id="upload-list"><li class="muted" id="label-loading-uploads">Loading uploads…</li></ul>
+    </div>
+  </div>
+
+  <!-- Edit Profile -->
+  <div class="section">
+    <div class="section-header" id="label-edit">Edit Profile</div>
+    <div class="section-body">
+      <button class="btn" onclick="toggleEditForm()" id="btn-edit-toggle">Edit Profile</button>
+      <div class="edit-form" id="edit-form">
+        <div>
+          <label id="label-edit-key">Profile Key</label>
+          <input type="password" class="key-input" id="edit-key-input" autocomplete="off" />
+        </div>
+        <div>
+          <label id="label-edit-name">Display Name</label>
+          <input type="text" id="edit-name-input" />
+        </div>
+        <div>
+          <label id="label-edit-bio">Bio</label>
+          <textarea id="edit-bio-input" rows="3"></textarea>
+        </div>
+        <div>
+          <label id="label-edit-skills">Skills (comma-separated)</label>
+          <input type="text" id="edit-skills-input" />
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="verifyAndDownload()" id="btn-download-yaml">Download YAML</button>
+          <button class="btn" onclick="toggleEditForm()" id="btn-cancel">Cancel</button>
+        </div>
+        <p id="edit-message" style="color:var(--muted);font-size:0.85rem"></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span id="footer-powered">Powered by GitHub Actions</span> ·
+  <a href="https://github.com/Smapifan/Dev-Profile" id="footer-contribute">Contribute on GitHub</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+<script>
+// ── i18n ─────────────────────────────────────────────────────────────────────
+const SUPPORTED_LANGS = ['en','de','es','fr','it','jp','cn'];
+const LANG_NAMES = { en:'English', de:'Deutsch', es:'Español', fr:'Français', it:'Italiano', jp:'日本語', cn:'中文' };
+let i18n = {};
+
+function t(key, vars) {
+  const keys = key.split('.');
+  let val = i18n;
+  for (const k of keys) { val = val && val[k]; }
+  if (val == null) return key;
+  if (vars) Object.keys(vars).forEach(k => { val = val.replace(`{{${k}}}`, vars[k]); });
+  return val;
+}
+
+async function loadI18n(lang) {
+  try {
+    const url = `../../.github/scripts/i18n/${lang}.yml`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.status);
+    const text = await res.text();
+    i18n = jsyaml.load(text) || {};
+  } catch {
+    if (lang !== 'en') await loadI18n('en');
+  }
+}
+
+function applyI18n() {
+  document.getElementById('nav-home').textContent = '← ' + t('nav.home');
+  document.getElementById('nav-all-profiles').textContent = t('home.all_profiles');
+  document.getElementById('label-socials').textContent = t('profile.socials');
+  document.getElementById('label-projects').textContent = t('profile.projects');
+  document.getElementById('label-mods').textContent = t('profile.mods');
+  document.getElementById('label-uploads').textContent = t('profile.uploads');
+  document.getElementById('label-loading-mods').textContent = t('profile.loading_mods');
+  document.getElementById('label-loading-uploads').textContent = t('profile.loading_uploads');
+  document.getElementById('label-edit').textContent = t('profile.edit_profile');
+  document.getElementById('btn-edit-toggle').textContent = t('profile.edit_profile');
+  document.getElementById('label-edit-key').textContent = t('create.your_key');
+  document.getElementById('label-edit-name').textContent = t('create.field_name');
+  document.getElementById('label-edit-bio').textContent = t('create.field_bio');
+  document.getElementById('label-edit-skills').textContent = t('create.field_skills');
+  document.getElementById('btn-download-yaml').textContent = t('create.download_yaml');
+  document.getElementById('btn-cancel').textContent = 'Cancel';
+  document.getElementById('footer-powered').textContent = t('footer.powered_by');
+  document.getElementById('footer-contribute').textContent = t('footer.contribute');
+}
+
+function buildLangSelect() {
+  const sel = document.getElementById('lang-select');
+  sel.innerHTML = '';
+  SUPPORTED_LANGS.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l;
+    opt.textContent = LANG_NAMES[l] || l;
+    sel.appendChild(opt);
+  });
+  sel.value = currentLang();
+  sel.addEventListener('change', async () => {
+    localStorage.setItem('devprofile_lang', sel.value);
+    await loadI18n(sel.value);
+    applyI18n();
+    renderProfile(profileCache);
+  });
+}
+
+function currentLang() {
+  return localStorage.getItem('devprofile_lang') ||
+    (navigator.language || 'en').slice(0, 2).toLowerCase();
+}
+
+// ── Profile data ──────────────────────────────────────────────────────────────
+let profileCache = null;
+
+async function loadProfile() {
+  try {
+    const res = await fetch('profile.yml');
+    if (!res.ok) throw new Error(res.status);
+    return jsyaml.load(await res.text()) || {};
+  } catch { return {}; }
+}
+
+async function loadModsCache() {
+  try {
+    const res = await fetch('mods_cache.yml');
+    if (!res.ok) throw new Error(res.status);
+    return jsyaml.load(await res.text()) || {};
+  } catch { return {}; }
+}
+
+async function loadUploadsIndex() {
+  try {
+    const res = await fetch('uploads_index.yml');
+    if (!res.ok) throw new Error(res.status);
+    return jsyaml.load(await res.text()) || {};
+  } catch { return {}; }
+}
+
+function renderProfile(p) {
+  if (!p) return;
+  const initials = (p.name || p.username || '?')[0].toUpperCase();
+  document.getElementById('profile-avatar').textContent = initials;
+  document.getElementById('profile-name').textContent = p.name || p.username || '—';
+  document.getElementById('profile-username').textContent = '@' + (p.username || '');
+  document.getElementById('profile-bio').textContent = p.bio || '';
+  document.title = t('profile.title', { name: p.name || p.username || 'Profile' });
+
+  const skillsEl = document.getElementById('profile-skills');
+  skillsEl.innerHTML = '';
+  (p.skills || []).forEach(s => {
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = s;
+    skillsEl.appendChild(tag);
+  });
+
+  if (p.socials && p.socials.length) {
+    const ul = document.getElementById('socials-list');
+    ul.innerHTML = '';
+    p.socials.forEach(url => {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${escHtml(url)}" target="_blank" rel="noopener">${escHtml(url)}</a>`;
+      ul.appendChild(li);
+    });
+    document.getElementById('section-socials').style.display = '';
+  }
+
+  if (p.projects && p.projects.length) {
+    const el = document.getElementById('projects-list');
+    el.innerHTML = '';
+    p.projects.forEach(proj => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = proj;
+      el.appendChild(tag);
+    });
+    document.getElementById('section-projects').style.display = '';
+  }
+
+  // Pre-fill edit form
+  document.getElementById('edit-name-input').value = p.name || '';
+  document.getElementById('edit-bio-input').value = p.bio || '';
+  document.getElementById('edit-skills-input').value = (p.skills || []).join(', ');
+}
+
+function renderMods(cache) {
+  const container = document.getElementById('mod-list');
+  const mods = (cache && cache.mods) || [];
+  if (cache && cache.updated_at) {
+    document.getElementById('mods-updated').textContent =
+      t('profile.last_updated', { date: new Date(cache.updated_at).toLocaleString() });
+  }
+  if (!mods.length) {
+    container.innerHTML = `<p class="muted">${t('mods.no_data')}</p>`;
+    return;
+  }
+  container.innerHTML = mods.map(m => {
+    const badgeClass = m.platform === 'curseforge' ? 'badge-curseforge' : 'badge-nexus';
+    const platformLabel = m.platform === 'curseforge' ? t('profile.platform_curseforge') : t('profile.platform_nexusmods');
+    return `<div class="mod-card">
+      <h3>${escHtml(m.name || m.id || '—')} <span class="badge ${badgeClass}">${platformLabel}</span></h3>
+      <div class="mod-meta">
+        ${m.downloads ? t('profile.downloads', { count: m.downloads.toLocaleString() }) : ''}
+        ${m.rating ? ' · ' + t('profile.rating', { score: m.rating }) : ''}
+        ${m.updated_at ? ' · ' + new Date(m.updated_at).toLocaleDateString() : ''}
+      </div>
+      ${m.description ? `<p>${escHtml(m.description)}</p>` : ''}
+      ${m.url ? `<a href="${escHtml(m.url)}" target="_blank" rel="noopener">${t('profile.view_mod')}</a>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderUploads(index) {
+  const ul = document.getElementById('upload-list');
+  const files = (index && index.files) || [];
+  if (!files.length) {
+    ul.innerHTML = `<li class="muted">${t('uploads.no_files')}</li>`;
+    return;
+  }
+  ul.innerHTML = files.map(f => `
+    <li>
+      <span>${escHtml(f.name)}</span>
+      <span class="file-meta">${escHtml(f.size || '')} · ${f.modified_at ? new Date(f.modified_at).toLocaleDateString() : ''}</span>
+    </li>`).join('');
+}
+
+// ── Edit / key verification ───────────────────────────────────────────────────
+function toggleEditForm() {
+  const form = document.getElementById('edit-form');
+  form.style.display = form.style.display === 'flex' ? 'none' : 'flex';
+}
+
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyAndDownload() {
+  const key = document.getElementById('edit-key-input').value.trim();
+  const msg = document.getElementById('edit-message');
+  if (!key) { msg.textContent = t('errors.load_failed'); return; }
+  if (!profileCache || !profileCache.key_hash) {
+    msg.textContent = 'Profile not loaded.'; return;
+  }
+  const hashed = await sha256(key);
+  if (hashed !== profileCache.key_hash) {
+    msg.textContent = t('profile.edit_key_wrong');
+    msg.style.color = 'var(--red)';
+    return;
+  }
+  // Build updated profile YAML
+  const updated = Object.assign({}, profileCache, {
+    name: document.getElementById('edit-name-input').value.trim() || profileCache.name,
+    bio: document.getElementById('edit-bio-input').value.trim(),
+    skills: document.getElementById('edit-skills-input').value.split(',').map(s => s.trim()).filter(Boolean),
+  });
+  const yamlStr = jsyaml.dump(updated, { lineWidth: 120 });
+  const blob = new Blob([yamlStr], { type: 'text/yaml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'profile.yml';
+  a.click();
+  msg.textContent = t('create.download_yaml') + ' ✓';
+  msg.style.color = 'var(--green)';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  const lang = currentLang();
+  await loadI18n(lang);
+  buildLangSelect();
+  applyI18n();
+
+  const [profile, modsCache, uploadsIndex] = await Promise.all([
+    loadProfile(),
+    loadModsCache(),
+    loadUploadsIndex(),
+  ]);
+
+  profileCache = profile;
+  renderProfile(profile);
+  renderMods(modsCache);
+  renderUploads(uploadsIndex);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+# 日本語 – Japanese translation template
+lang: jp
+lang_name: 日本語
+
+nav:
+  home: ホーム
+  profiles: プロフィール
+  new_profile: プロフィール作成
+  language: 言語
+
+home:
+  title: 開発者プロフィール
+  subtitle: 開発者がMODやプロジェクトを紹介するプラットフォーム
+  all_profiles: すべてのプロフィール
+  no_profiles: まだプロフィールがありません。
+  create_first: 最初のプロフィールを作成しましょう！
+  loading: プロフィールを読み込み中…
+  search_placeholder: プロフィールを検索…
+
+profile:
+  title: "{{name}} のプロフィール"
+  bio: 自己紹介
+  skills: スキル
+  socials: SNS リンク
+  projects: プロジェクト
+  mods: MOD
+  uploads: アップロード
+  no_mods: MODはまだ登録されていません。
+  no_uploads: アップロードファイルはまだありません。
+  loading_mods: MODを読み込み中…
+  loading_uploads: アップロードを読み込み中…
+  last_updated: "最終更新: {{date}}"
+  edit_profile: プロフィールを編集
+  edit_key_prompt: 編集するにはプロフィールキーを入力してください
+  edit_key_wrong: キーが違います。もう一度試してください。
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} ダウンロード"
+  rating: "評価: {{score}}"
+  view_mod: MODを見る
+
+create:
+  title: 新しいプロフィールを作成
+  subtitle: 開発者プロフィールを作成するために詳細を入力してください
+  field_username: ユーザー名
+  field_username_placeholder: yourname
+  field_name: 表示名
+  field_name_placeholder: あなたの名前
+  field_bio: 自己紹介
+  field_bio_placeholder: 自己紹介を書いてください…
+  field_skills: スキル（カンマ区切り）
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: SNSリンク（1行に1つ）
+  field_socials_placeholder: "https://github.com/yourname"
+  field_language: 使用言語
+  submit: プロフィールを作成
+  generating: プロフィールを生成中…
+  success_title: プロフィールが作成されました！
+  success_message: "プロフィール '{{username}}' が作成されました。MODキャッシュのセットアップのためにワークフローが開始されました。"
+  key_info: "プロフィールキーが以下に表示されています。保存してください – プロフィールの編集に必要です。再表示はされません。"
+  your_key: あなたのプロフィールキー
+  copy_key: キーをコピー
+  copied: コピーしました！
+  error_username_taken: このユーザー名はすでに使用されています。
+  error_username_invalid: ユーザー名には文字、数字、ハイフン、アンダースコアのみ使用できます。
+  error_required: このフィールドは必須です。
+  download_yaml: プロフィールYAMLをダウンロード
+  pr_instructions: "プロフィールを追加するには、生成されたYAMLファイルでPull Requestを開いてください。"
+
+mods:
+  title: MOD
+  loading: MODデータを読み込み中…
+  error: MODデータを読み込めませんでした。
+  no_data: MODデータはまだありません。キャッシュは自動的に更新されます。
+  updated_at: "キャッシュ更新: {{date}}"
+
+uploads:
+  title: アップロード
+  loading: アップロードを読み込み中…
+  error: アップロードリストを読み込めませんでした。
+  no_files: アップロードファイルはまだありません。
+  file_name: ファイル名
+  file_size: サイズ
+  uploaded_at: アップロード日時
+
+footer:
+  powered_by: GitHub Actions で動作
+  contribute: GitHubで貢献する
+  license: MIT ライセンス
+
+errors:
+  not_found: ページが見つかりません。
+  load_failed: データの読み込みに失敗しました。
+  network: ネットワークエラーです。もう一度試してください。

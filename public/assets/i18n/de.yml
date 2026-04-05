@@ -1,0 +1,101 @@
+# Deutsch – German translation template
+lang: de
+lang_name: Deutsch
+
+nav:
+  home: Startseite
+  profiles: Profile
+  new_profile: Profil erstellen
+  language: Sprache
+
+home:
+  title: Dev-Profile
+  badge: Open Source
+  headline_1: Entdecke
+  headline_2: Entwickler
+  headline_3: Profile
+  subtitle: Eine Plattform für Entwickler, um ihre Mods und Projekte zu präsentieren
+  all_profiles: Alle Profile
+  no_profiles: Noch keine Profile vorhanden.
+  create_first: Erstelle als Erster ein Profil!
+  loading: Profile werden geladen…
+  search_placeholder: Profile suchen…
+
+profile:
+  title: "{{name}}s Profil"
+  bio: Über mich
+  skills: Fähigkeiten
+  socials: Social-Links
+  projects: Projekte
+  mods: Mods
+  uploads: Uploads
+  no_mods: Noch keine Mods eingetragen.
+  no_uploads: Noch keine Uploads.
+  loading_mods: Mods werden geladen…
+  loading_uploads: Uploads werden geladen…
+  last_updated: "Zuletzt aktualisiert: {{date}}"
+  edit_profile: Profil bearbeiten
+  edit_key_prompt: Gib deinen Profil-Key ein, um zu bearbeiten
+  edit_key_wrong: Falscher Key. Bitte erneut versuchen.
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} Downloads"
+  rating: "Bewertung: {{score}}"
+  view_mod: Zur Mod-Seite
+
+create:
+  title: Neues Profil erstellen
+  subtitle: Füll die Details aus, um dein Entwicklerprofil zu erstellen
+  field_username: Benutzername
+  field_username_placeholder: deinname
+  field_name: Anzeigename
+  field_name_placeholder: Dein Name
+  field_bio: Bio
+  field_bio_placeholder: Erzähl uns von dir…
+  field_skills: Fähigkeiten (kommagetrennt)
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: Social-Links (einer pro Zeile)
+  field_socials_placeholder: "https://github.com/deinname"
+  field_language: Bevorzugte Sprache
+  submit: Profil erstellen
+  generating: Profil wird erstellt…
+  success_title: Profil erstellt!
+  success_message: "Dein Profil '{{username}}' wurde erstellt. Ein Workflow wurde gestartet, um deinen Mod-Cache einzurichten."
+  key_info: "Dein Profil-Key wird unten angezeigt. Speichere ihn – du brauchst ihn, um dein Profil zu bearbeiten. Er wird nicht erneut angezeigt."
+  your_key: Dein Profil-Key
+  copy_key: Key kopieren
+  copied: Kopiert!
+  error_username_taken: Dieser Benutzername ist bereits vergeben.
+  error_username_invalid: Der Benutzername darf nur Buchstaben, Zahlen, Bindestriche und Unterstriche enthalten.
+  error_required: Dieses Feld ist erforderlich.
+  download_yaml: Profil-YAML herunterladen
+  pr_instructions: "Um dein Profil hinzuzufügen, öffne einen Pull Request mit den generierten YAML-Dateien."
+
+mods:
+  title: Mods
+  loading: Mod-Daten werden geladen…
+  error: Mod-Daten konnten nicht geladen werden.
+  no_data: Noch keine Mod-Daten verfügbar. Der Cache wird automatisch aktualisiert.
+  updated_at: "Cache aktualisiert: {{date}}"
+
+uploads:
+  title: Uploads
+  loading: Uploads werden geladen…
+  error: Upload-Liste konnte nicht geladen werden.
+  no_files: Noch keine Uploads.
+  file_name: Datei
+  file_size: Größe
+  uploaded_at: Hochgeladen
+
+footer:
+  powered_by: Betrieben von GitHub Actions
+  contribute: Auf GitHub beitragen
+  license: MIT-Lizenz
+
+errors:
+  not_found: Seite nicht gefunden.
+  load_failed: Daten konnten nicht geladen werden.
+  network: Netzwerkfehler. Bitte erneut versuchen.
+
+btn_cancel: Abbrechen
+btn_close: Schließen

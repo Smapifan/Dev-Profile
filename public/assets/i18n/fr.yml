@@ -1,0 +1,101 @@
+# Français – French translation template
+lang: fr
+lang_name: Français
+
+nav:
+  home: Accueil
+  profiles: Profils
+  new_profile: Créer un profil
+  language: Langue
+
+home:
+  title: Profils de Développeurs
+  badge: Open Source
+  headline_1: Découvrez
+  headline_2: les Profils
+  headline_3: Développeurs
+  subtitle: Une plateforme pour que les développeurs présentent leurs mods et projets
+  all_profiles: Tous les profils
+  no_profiles: Aucun profil pour l'instant.
+  create_first: Soyez le premier à créer un profil !
+  loading: Chargement des profils…
+  search_placeholder: Rechercher des profils…
+
+profile:
+  title: "Profil de {{name}}"
+  bio: Biographie
+  skills: Compétences
+  socials: Liens sociaux
+  projects: Projets
+  mods: Mods
+  uploads: Fichiers
+  no_mods: Aucun mod répertorié pour l'instant.
+  no_uploads: Aucun fichier pour l'instant.
+  loading_mods: Chargement des mods…
+  loading_uploads: Chargement des fichiers…
+  last_updated: "Dernière mise à jour : {{date}}"
+  edit_profile: Modifier le profil
+  edit_key_prompt: Entrez votre clé de profil pour modifier
+  edit_key_wrong: Clé incorrecte. Veuillez réessayer.
+  platform_curseforge: CurseForge
+  platform_nexusmods: Nexus Mods
+  downloads: "{{count}} téléchargements"
+  rating: "Note : {{score}}"
+  view_mod: Voir le mod
+
+create:
+  title: Créer un nouveau profil
+  subtitle: Remplissez les détails pour créer votre profil de développeur
+  field_username: Nom d'utilisateur
+  field_username_placeholder: votrenom
+  field_name: Nom affiché
+  field_name_placeholder: Votre Nom
+  field_bio: Biographie
+  field_bio_placeholder: Parlez-nous de vous…
+  field_skills: Compétences (séparées par des virgules)
+  field_skills_placeholder: JavaScript, Modding, Python
+  field_socials: Liens sociaux (un par ligne)
+  field_socials_placeholder: "https://github.com/votrenom"
+  field_language: Langue préférée
+  submit: Créer le profil
+  generating: Génération du profil…
+  success_title: Profil créé !
+  success_message: "Votre profil '{{username}}' a été créé. Un workflow a été déclenché pour configurer votre cache de mods."
+  key_info: "Votre clé de profil est affichée ci-dessous. Sauvegardez-la – vous en aurez besoin pour modifier votre profil plus tard. Elle ne sera plus affichée."
+  your_key: Votre clé de profil
+  copy_key: Copier la clé
+  copied: Copié !
+  error_username_taken: Ce nom d'utilisateur est déjà pris.
+  error_username_invalid: Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores.
+  error_required: Ce champ est obligatoire.
+  download_yaml: Télécharger le YAML du profil
+  pr_instructions: "Pour ajouter votre profil, ouvrez une Pull Request avec les fichiers YAML générés."
+
+mods:
+  title: Mods
+  loading: Chargement des données de mods…
+  error: Impossible de charger les données de mods.
+  no_data: Aucune donnée de mod disponible pour l'instant. Le cache sera mis à jour automatiquement.
+  updated_at: "Cache mis à jour : {{date}}"
+
+uploads:
+  title: Fichiers
+  loading: Chargement des fichiers…
+  error: Impossible de charger la liste des fichiers.
+  no_files: Aucun fichier pour l'instant.
+  file_name: Fichier
+  file_size: Taille
+  uploaded_at: Mis en ligne
+
+footer:
+  powered_by: Propulsé par GitHub Actions
+  contribute: Contribuer sur GitHub
+  license: Licence MIT
+
+errors:
+  not_found: Page introuvable.
+  load_failed: Échec du chargement des données.
+  network: Erreur réseau. Veuillez réessayer.
+
+btn_cancel: Annuler
+btn_close: Fermer

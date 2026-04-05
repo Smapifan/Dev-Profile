@@ -180,7 +180,7 @@ function t(key, vars) {
 
 async function loadI18n(lang) {
   try {
-    const url = `../../.github/scripts/i18n/${lang}.yml`;
+    const url = `../../public/assets/i18n/${lang}.yml`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(res.status);
     const text = await res.text();

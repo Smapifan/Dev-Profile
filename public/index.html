@@ -941,7 +941,7 @@ const PLATFORM_CUSTOM_ICONS = {
   nexusmods: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
     '<rect width="24" height="24" rx="3" fill="#d98f40"/>' +
-    '<path d="M4.5 7.5v9H6V10l3 7h1.5v-9H9v7l-3-7H4.5z' +
+    '<path d="M4.5 7.5v9H6V10l3 7h1.5v-9H9v7l-3-7H4.5z ' +
     'M12.5 7.5l2 4 2-4H18l-2.5 4.5 2.5 4.5h-2l-2-4-2 4h-2l2.5-4.5L11 7.5h1.5z" fill="white"/>' +
     '</svg>'
   ),
@@ -972,16 +972,18 @@ function platformIconImg(type, size = 16) {
   const src = platformIconSrc(type);
   const p   = PLATFORMS[type] || PLATFORMS.link;
   const alt = p.label || type;
+  /* Sanitize values used in attribute strings — all come from the hardcoded PLATFORMS map but
+     defensive validation prevents issues if the map is ever extended with untrusted data */
+  const abbr  = (alt.slice(0, 2).toUpperCase().replace(/[^A-Z0-9]/g, '') || '??');
+  const color = /^[0-9a-fA-F]{3,6}$/.test(p.color) ? p.color : '8b949e';
   if (!src) {
-    const abbr = alt.slice(0, 2).toUpperCase();
-    return `<span style="font-size:${Math.round(size * 0.65)}px;font-weight:700;color:#${p.color};line-height:1;">${abbr}</span>`;
+    return `<span style="font-size:${Math.round(size * 0.65)}px;font-weight:700;color:#${color};line-height:1;">${abbr}</span>`;
   }
   /* data URIs never fail, but CDN imgs can — provide a text abbreviation fallback */
-  const abbr = alt.slice(0, 2).toUpperCase();
-  const color = p.color;
   const fs = Math.round(size * 0.65);
-  const onErr = `this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${abbr}',title:'${alt.replace(/'/g,"\\'")}',style:'font-size:${fs}px;font-weight:700;color:#${color};line-height:1;'}))`;
-  return `<img src="${src}" alt="${alt}" width="${size}" height="${size}" loading="lazy" onerror="${onErr}" />`;
+  const safeAlt = alt.replace(/['"&<>]/g, '');
+  const onErr = `this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${abbr}',title:'${safeAlt}',style:'font-size:${fs}px;font-weight:700;color:#${color};line-height:1;'}))`;
+  return `<img src="${src}" alt="${safeAlt}" width="${size}" height="${size}" loading="lazy" onerror="${onErr}" />`;
 }
 
 /* ── Extra links management ─────────────────────────────────────────── */

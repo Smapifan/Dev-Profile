@@ -128,7 +128,8 @@ The form and profile cards support the following platforms with icons and URL va
 | Twitch      | icon | Any `twitch.tv` URL                                   |
 | Other       | 🔗   | Any valid `https://` URL                               |
 
-Platform icons are sourced from [Simple Icons](https://simpleicons.org/) via CDN.
+Platform icons are sourced from [Simple Icons](https://simpleicons.org/) via CDN.  
+**Note:** Nexus Mods is not available on Simple Icons; it uses a built-in custom SVG icon instead.
 
 ---
 

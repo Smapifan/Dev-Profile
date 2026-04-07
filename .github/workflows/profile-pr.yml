@@ -29,7 +29,15 @@ jobs:
       - name: Write issue body to file
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
-        run: printf '%s' "$ISSUE_BODY" > /tmp/profile.yml
+        run: |
+          # The client base64-encodes the YAML (marked with <!-- profile-yaml-b64 -->)
+          # to protect profile data and avoid special-character issues in the API.
+          # Decode if the marker is present; otherwise fall back to raw body.
+          if printf '%s' "$ISSUE_BODY" | grep -qF '<!-- profile-yaml-b64 -->'; then
+            printf '%s' "$ISSUE_BODY" | tail -n +2 | tr -d '[:space:]' | base64 --decode > /tmp/profile.yml
+          else
+            printf '%s' "$ISSUE_BODY" > /tmp/profile.yml
+          fi
 
       - name: Determine mode and extract username
         env:

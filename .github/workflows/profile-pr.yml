@@ -68,7 +68,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git checkout -B "profile/$USERNAME"
           git add "profiles/$USERNAME" profiles.yml
-          git diff --cached --quiet || git commit -m "feat: add/update profile '$USERNAME' from issue #${{ github.event.issue.number }}"
+          ACTION_VERB="add"
+          if [[ "$UPDATE_FLAG" == "--update" ]]; then ACTION_VERB="update"; fi
+          git diff --cached --quiet || git commit -m "feat: ${ACTION_VERB} profile '$USERNAME' from issue #${{ github.event.issue.number }}"
           git push --force origin "profile/$USERNAME"
 
       - name: Open Pull Request

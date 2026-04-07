@@ -221,22 +221,26 @@ function mainFromYaml(yamlFile, allowUpdate) {
     fs.mkdirSync(path.join(profileDir, 'uploads'), { recursive: true });
   }
 
-  // Determine key_hash
+  // Determine key_hash and preserve created_at for updates
   let key = null;
   let keyHash = String(data.key_hash || '');
+  let existingCreatedAt = null;
+
+  if (allowUpdate && dirExists) {
+    try {
+      const existing = loadYaml(fs.readFileSync(path.join(profileDir, 'profile.yml'), 'utf8'));
+      if (existing) {
+        if (!/^[a-f0-9]{40,}$/i.test(keyHash)) {
+          keyHash = String(existing.key_hash || '');
+        }
+        existingCreatedAt = existing.created_at || null;
+      }
+    } catch { /* ignore read errors */ }
+  }
 
   if (!/^[a-f0-9]{40,}$/i.test(keyHash)) {
-    // No valid key_hash supplied — for updates preserve existing; for new profiles generate one
-    if (allowUpdate && dirExists) {
-      try {
-        const existing = loadYaml(fs.readFileSync(path.join(profileDir, 'profile.yml'), 'utf8'));
-        keyHash = (existing && String(existing.key_hash || '')) || '';
-      } catch { keyHash = ''; }
-    }
-    if (!/^[a-f0-9]{40,}$/i.test(keyHash)) {
-      key = generateKey(username);
-      keyHash = hashKey(key);
-    }
+    key = generateKey(username);
+    keyHash = hashKey(key);
   }
 
   // Normalize socials
@@ -262,7 +266,8 @@ function mainFromYaml(yamlFile, allowUpdate) {
     projects:   Array.isArray(data.projects) ? data.projects : [],
     language:   SUPPORTED_LANGS.has(data.language) ? data.language : 'en',
     key_hash:   keyHash,
-    created_at: data.created_at || new Date().toISOString(),
+    // Preserve original created_at on updates; fall back to YAML value or now
+    created_at: (allowUpdate && dirExists && existingCreatedAt) || data.created_at || new Date().toISOString(),
   };
 
   writeProfileFiles(profileDir, username, profileData, !dirExists);

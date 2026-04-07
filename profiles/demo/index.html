@@ -352,8 +352,7 @@
         <div class="issue-fallback" id="issue-fallback">
           <h4 id="fallback-title">Submit via GitHub Issue</h4>
           <p id="fallback-hint">Open a GitHub Issue – github-actions[bot] will create a PR automatically.</p>
-          <a class="btn btn-primary" href="#" id="fallback-link" target="_blank" rel="noopener noreferrer"
-             id="fallback-btn">Open Issue →</a>
+          <a class="btn btn-primary" href="#" id="fallback-link" target="_blank" rel="noopener noreferrer">Open Issue →</a>
         </div>
       </div>
     </div>
@@ -689,7 +688,7 @@ async function submitEdit() {
     const fallback = document.getElementById('issue-fallback');
     const link = document.getElementById('fallback-link');
     if (link) link.href = issueUrl;
-    fallback.style.display = '';
+    fallback.style.display = 'block';
   }
 }
 

@@ -906,13 +906,12 @@
         <button class="btn btn-primary" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
         <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
       </div>
-      <p id="pr-status" class="pr-status"></p>
       <div id="pr-fallback" class="pr-trigger" style="display:none">
-        <h4 data-i18n="create.submit_issue_title">Submit via GitHub Issue</h4>
-        <p data-i18n="create.submit_issue_hint">Open a GitHub Issue – <strong>github-actions[bot]</strong> will automatically create a branch and Pull Request for you. No token needed.</p>
+        <h4 data-i18n="create.submit_pr_title">Submit Pull Request</h4>
+        <p data-i18n="create.submit_pr_hint">Click the button below – <strong>github-actions[bot]</strong> will automatically create a Pull Request for you. No token needed.</p>
         <div class="pr-trigger-row">
           <a class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer"
-             data-i18n="create.submit_issue_btn">Open Issue →</a>
+             data-i18n="create.submit_pr_btn">Open Pull Request →</a>
         </div>
       </div>
     </div>
@@ -1068,13 +1067,13 @@ async function loadI18n(lang) {
   /* Validate lang against allow-list to prevent path traversal */
   const safeLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
   try {
-    const res = await fetch(`public/assets/i18n/${safeLang}.yml`);
+    const res = await fetch(`assets/i18n/${safeLang}.yml`);
     if (!res.ok) throw new Error(res.status);
     i18n = jsyaml.load(await res.text()) || {};
   } catch {
     if (safeLang !== 'en') {
       try {
-        const res = await fetch('public/assets/i18n/en.yml');
+        const res = await fetch('assets/i18n/en.yml');
         i18n = jsyaml.load(await res.text()) || {};
       } catch { i18n = {}; }
     } else {
@@ -1271,10 +1270,8 @@ function openCreateModal() {
   const extraContainer = document.getElementById('extra-links');
   if (extraContainer) extraContainer.innerHTML = '';
   generatedKey = null; generatedData = null;
-  /* reset PR status */
-  const prStatus = document.getElementById('pr-status');
+  /* hide PR submit section */
   const prFallback = document.getElementById('pr-fallback');
-  if (prStatus)  { prStatus.textContent = ''; prStatus.className = 'pr-status'; }
   if (prFallback) prFallback.style.display = 'none';
   document.getElementById('f-username').focus();
 }
@@ -1362,19 +1359,14 @@ async function handleCreate() {
   generatedKey  = key;
   generatedData = { username, name, bio, skills, socials, projects: [], language, key_hash: keyHash, created_at: new Date().toISOString() };
 
-  /* Build pre-filled GitHub issue URL and auto-open it */
-  let issueOpened = false;
-  let issueUrl = '';
-  try {
-    if (typeof jsyaml !== 'undefined') {
-      const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
-      const issueTitle  = encodeURIComponent(`[Profil Submission] ${username}`);
-      const issueBody   = encodeURIComponent(profileYaml);
-      issueUrl = `https://github.com/Smapifan/Dev-Profile/issues/new?title=${issueTitle}&body=${issueBody}`;
-      const win = window.open(issueUrl, '_blank', 'noopener,noreferrer');
-      issueOpened = !!win;
-    }
-  } catch (_) { /* popup blocked – fallback shown below */ }
+  /* Build pre-filled GitHub issue URL (triggers automatic PR creation via workflow) */
+  let submitUrl = '';
+  if (typeof jsyaml !== 'undefined') {
+    const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
+    const issueTitle  = encodeURIComponent(`[Profil Submission] ${username}`);
+    const issueBody   = encodeURIComponent(profileYaml);
+    submitUrl = `https://github.com/Smapifan/Dev-Profile/issues/new?title=${issueTitle}&body=${issueBody}`;
+  }
 
   btn.disabled = false;
   btn.textContent = t('create.submit');
@@ -1385,23 +1377,12 @@ async function handleCreate() {
   document.getElementById('success-msg').textContent  = t('create.success_message', { username });
   document.getElementById('key-value').textContent    = key;
 
-  /* Show PR submission status */
-  const prStatus = document.getElementById('pr-status');
+  /* Always show the PR submit section with the pre-filled URL */
   const prFallback = document.getElementById('pr-fallback');
-  if (prStatus) {
-    if (issueOpened) {
-      prStatus.textContent = t('create.submit_pr_success');
-      prStatus.className = 'pr-status pr-status-ok';
-      if (prFallback) prFallback.style.display = 'none';
-    } else {
-      prStatus.textContent = t('create.submit_pr_error');
-      prStatus.className = 'pr-status pr-status-err';
-      if (prFallback && issueUrl) {
-        const a = prFallback.querySelector('a');
-        if (a) a.href = issueUrl;
-        prFallback.style.display = '';
-      }
-    }
+  if (prFallback) {
+    const a = prFallback.querySelector('a');
+    if (a && submitUrl) a.href = submitUrl;
+    prFallback.style.display = submitUrl ? '' : 'none';
   }
 }
 

@@ -69,7 +69,7 @@ create:
   error_username_invalid: Username may only contain letters, numbers, hyphens and underscores.
   error_required: This field is required.
   download_yaml: Download Profile YAML
-  pr_instructions: "To publish your profile, open a GitHub Issue using the template – GitHub Actions will handle the rest automatically."
+  pr_instructions: "To publish your profile, click the button below – GitHub Actions will automatically create a Pull Request for you. No token needed."
   section_platforms: Platform Links
   field_github: GitHub Profile
   field_github_placeholder: "https://github.com/username"
@@ -80,16 +80,13 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ Add Link"
   remove_link: Remove
-  submit_issue_title: Submit via GitHub Issue
-  submit_issue_hint: "Open a GitHub Issue – github-actions[bot] will automatically create a branch and Pull Request for you. No token needed."
-  submit_issue_btn: "Open Issue →"
+  submit_pr_title: Submit Pull Request
+  submit_pr_hint: "Click the button below – github-actions[bot] will automatically create a branch and Pull Request for you. No token needed."
+  submit_pr_btn: "Open Pull Request →"
   error_invalid_url: "Please enter a valid URL (must start with https://)."
   error_github_url: "Enter a valid GitHub profile URL (e.g. https://github.com/username)"
   error_nexusmods_url: "Enter a valid Nexus Mods profile URL (e.g. https://www.nexusmods.com/users/12345)"
   error_curseforge_url: "Enter a valid CurseForge profile URL (e.g. https://www.curseforge.com/members/username)"
-  submit_pr_pending: "Opening GitHub Issue…"
-  submit_pr_success: "GitHub Issue opened! Your PR will be created automatically."
-  submit_pr_error: "Could not open issue automatically. Please use the button below."
 
 mods:
   title: Mods

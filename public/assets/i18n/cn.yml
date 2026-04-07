@@ -69,7 +69,7 @@ create:
   error_username_invalid: 用户名只能包含字母、数字、连字符和下划线。
   error_required: 此字段为必填项。
   download_yaml: 下载资料 YAML
-  pr_instructions: "要发布您的资料，请使用模板开启一个 GitHub Issue – GitHub Actions 将自动完成后续步骤。"
+  pr_instructions: "要发布您的资料，请点击下方按钮 – GitHub Actions 将自动为您创建 Pull Request。无需令牌。"
   section_platforms: 平台链接
   field_github: GitHub 个人主页
   field_github_placeholder: "https://github.com/username"
@@ -80,16 +80,13 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ 添加链接"
   remove_link: 删除
-  submit_issue_title: 通过 GitHub Issue 提交
-  submit_issue_hint: "开启一个 GitHub Issue – github-actions[bot] 将自动为您创建分支和 Pull Request。无需令牌。"
-  submit_issue_btn: "开启 Issue →"
+  submit_pr_title: 提交 Pull Request
+  submit_pr_hint: "点击下方按钮 – github-actions[bot] 将自动为您创建分支和 Pull Request。无需令牌。"
+  submit_pr_btn: "打开 Pull Request →"
   error_invalid_url: "请输入有效的网址（必须以 https:// 开头）。"
   error_github_url: "请输入有效的 GitHub 个人主页网址（例如 https://github.com/username）"
   error_nexusmods_url: "请输入有效的 Nexus Mods 个人主页网址（例如 https://www.nexusmods.com/users/12345）"
   error_curseforge_url: "请输入有效的 CurseForge 个人主页网址（例如 https://www.curseforge.com/members/username）"
-  submit_pr_pending: "正在开启 GitHub Issue…"
-  submit_pr_success: "GitHub Issue 已开启！您的 PR 将自动创建。"
-  submit_pr_error: "无法自动开启 Issue，请使用下方按钮。"
 
 mods:
   title: 模组

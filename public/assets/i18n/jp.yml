@@ -69,7 +69,7 @@ create:
   error_username_invalid: ユーザー名には文字、数字、ハイフン、アンダースコアのみ使用できます。
   error_required: このフィールドは必須です。
   download_yaml: プロフィールYAMLをダウンロード
-  pr_instructions: "プロフィールを公開するには、テンプレートを使って GitHub Issue を開いてください – GitHub Actions が残りを自動的に処理します。"
+  pr_instructions: "プロフィールを公開するには、下のボタンをクリックしてください – GitHub Actions が自動的に Pull Request を作成します。トークン不要。"
   section_platforms: プラットフォームリンク
   field_github: GitHubプロフィール
   field_github_placeholder: "https://github.com/username"
@@ -80,16 +80,13 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ リンクを追加"
   remove_link: 削除
-  submit_issue_title: GitHub Issue で送信
-  submit_issue_hint: "GitHub Issue を開いてください – github-actions[bot] が自動的にブランチと Pull Request を作成します。トークン不要。"
-  submit_issue_btn: "Issue を開く →"
+  submit_pr_title: Pull Request を送信
+  submit_pr_hint: "下のボタンをクリックしてください – github-actions[bot] が自動的にブランチと Pull Request を作成します。トークン不要。"
+  submit_pr_btn: "Pull Request を開く →"
   error_invalid_url: "有効なURLを入力してください（https://で始まる必要があります）。"
   error_github_url: "有効なGitHubプロフィールURLを入力してください（例: https://github.com/username）"
   error_nexusmods_url: "有効なNexus ModsプロフィールURLを入力してください（例: https://www.nexusmods.com/users/12345）"
   error_curseforge_url: "有効なCurseForgeプロフィールURLを入力してください（例: https://www.curseforge.com/members/username）"
-  submit_pr_pending: "GitHub Issue を開いています…"
-  submit_pr_success: "GitHub Issue が開かれました！PR が自動的に作成されます。"
-  submit_pr_error: "Issue を自動的に開けませんでした。下のボタンをご利用ください。"
 
 mods:
   title: MOD

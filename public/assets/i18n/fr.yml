@@ -69,7 +69,7 @@ create:
   error_username_invalid: Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores.
   error_required: Ce champ est obligatoire.
   download_yaml: Télécharger le YAML du profil
-  pr_instructions: "Pour publier votre profil, ouvrez une Issue GitHub en utilisant le modèle – GitHub Actions s'occupera du reste automatiquement."
+  pr_instructions: "Pour publier votre profil, cliquez sur le bouton ci-dessous – GitHub Actions créera automatiquement une Pull Request pour vous. Aucun token requis."
   section_platforms: Liens de plateforme
   field_github: Profil GitHub
   field_github_placeholder: "https://github.com/username"
@@ -80,16 +80,13 @@ create:
   field_link_placeholder: "https://example.com/votreProfil"
   add_link: "+ Ajouter un lien"
   remove_link: Supprimer
-  submit_issue_title: Soumettre via une Issue GitHub
-  submit_issue_hint: "Ouvrez une Issue GitHub – github-actions[bot] créera automatiquement une branche et une Pull Request pour vous. Aucun token requis."
-  submit_issue_btn: "Ouvrir une Issue →"
+  submit_pr_title: Soumettre une Pull Request
+  submit_pr_hint: "Cliquez sur le bouton ci-dessous – github-actions[bot] créera automatiquement une branche et une Pull Request pour vous. Aucun token requis."
+  submit_pr_btn: "Ouvrir une Pull Request →"
   error_invalid_url: "Veuillez entrer une URL valide (doit commencer par https://)."
   error_github_url: "Entrez une URL de profil GitHub valide (ex. https://github.com/username)"
   error_nexusmods_url: "Entrez une URL de profil Nexus Mods valide (ex. https://www.nexusmods.com/users/12345)"
   error_curseforge_url: "Entrez une URL de profil CurseForge valide (ex. https://www.curseforge.com/members/username)"
-  submit_pr_pending: "Ouverture de l'Issue GitHub…"
-  submit_pr_success: "Issue GitHub ouverte ! Votre PR sera créée automatiquement."
-  submit_pr_error: "Impossible d'ouvrir l'Issue automatiquement. Utilisez le bouton ci-dessous."
 
 mods:
   title: Mods

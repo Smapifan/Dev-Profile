@@ -1,4 +1,22 @@
-github: maxmustermann
-nexusmods: max123
-curseforge: mustercf
-bio: "Modder mit Leib und Seele!"
+username: demo
+name: Demo Modder
+bio: "Ein leidenschaftlicher Modder für Skyrim SE und Fallout 4. Erstellt Mods seit 2015."
+skills:
+  - Modding
+  - Skyrim SE
+  - Fallout 4
+  - Python
+  - Papyrus
+socials:
+  - type: github
+    url: https://github.com/maxmustermann
+  - type: nexusmods
+    url: https://www.nexusmods.com/users/123456
+  - type: curseforge
+    url: https://www.curseforge.com/members/mustercf
+projects: []
+language: de
+# Demo profile key_hash is intentionally all-zeros.
+# sha256 never produces all-zeros, so the edit form will always reject key entry for this demo.
+key_hash: 0000000000000000000000000000000000000000000000000000000000000000
+created_at: 2024-01-01T00:00:00.000Z

@@ -1428,7 +1428,7 @@ async function submitPR() {
     const res = await fetch('https://api.github.com/repos/Smapifan/Dev-Profile/issues', {
       method: 'POST',
       headers: {
-        'Authorization': `token ${pat}`,
+        'Authorization': `Bearer ${pat}`,
         'Content-Type':  'application/json',
         'Accept':        'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28'
@@ -1439,8 +1439,15 @@ async function submitPR() {
     if (res.ok) {
       const data = await res.json();
       if (status) {
-        const link = data.html_url ? ` <a href="${data.html_url}" target="_blank" rel="noopener noreferrer">#${data.number}</a>` : '';
-        status.innerHTML = (t('create.submit_pr_success') || '✅ Issue created!') + link;
+        status.textContent = t('create.submit_pr_success') || '✅ Issue created!';
+        if (data.html_url && data.number) {
+          const link = document.createElement('a');
+          link.href   = data.html_url;
+          link.target = '_blank';
+          link.rel    = 'noopener noreferrer';
+          link.textContent = ` #${Number(data.number)}`;
+          status.appendChild(link);
+        }
         status.className = 'pr-status pr-status-ok';
         status.style.display = '';
       }

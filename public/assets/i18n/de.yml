@@ -69,7 +69,7 @@ create:
   error_username_invalid: Der Benutzername darf nur Buchstaben, Zahlen, Bindestriche und Unterstriche enthalten.
   error_required: Dieses Feld ist erforderlich.
   download_yaml: Profil-YAML herunterladen
-  pr_instructions: "Um dein Profil zu veröffentlichen, klicke auf den Button unten – GitHub Actions erstellt automatisch einen Pull Request für dich. Kein Token nötig."
+  pr_instructions: "Um dein Profil zu veröffentlichen, gib unten deinen GitHub-Token ein und klicke auf den Button – GitHub Actions erstellt automatisch einen Branch und Pull Request für dich."
   section_platforms: Plattform-Links
   field_github: GitHub-Profil
   field_github_placeholder: "https://github.com/username"
@@ -80,9 +80,14 @@ create:
   field_link_placeholder: "https://example.com/deinprofil"
   add_link: "+ Link hinzufügen"
   remove_link: Entfernen
-  submit_pr_title: Pull Request einreichen
-  submit_pr_hint: "Klicke auf den Button unten – github-actions[bot] erstellt automatisch einen Branch und einen Pull Request für dich. Kein Token nötig."
-  submit_pr_btn: "Pull Request öffnen →"
+  submit_pr_title: Pull Request automatisch erstellen
+  submit_pat_label: "GitHub Token (public_repo Berechtigung)"
+  submit_pat_placeholder: "ghp_…"
+  submit_pat_hint: "Gib ein GitHub Personal Access Token an, um automatisch einen Branch zu erstellen und einen PR zu öffnen. Dein Token wird nirgendwo gespeichert."
+  submit_pr_btn: "Branch erstellen & PR öffnen"
+  submit_pr_working: "PR wird erstellt…"
+  submit_pr_success: "✅ Issue erstellt! Der Workflow öffnet in Kürze einen PR."
+  submit_pr_error: "Issue konnte nicht erstellt werden. Prüfe deinen Token und versuche es erneut."
   error_invalid_url: "Bitte gib eine gültige URL ein (muss mit https:// beginnen)."
   error_github_url: "Gib eine gültige GitHub-Profil-URL ein (z. B. https://github.com/username)"
   error_nexusmods_url: "Gib eine gültige Nexus Mods Profil-URL ein (z. B. https://www.nexusmods.com/users/12345)"

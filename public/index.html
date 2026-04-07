@@ -906,13 +906,18 @@
         <button class="btn btn-primary" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
         <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
       </div>
-      <div id="pr-fallback" class="pr-trigger" style="display:none">
-        <h4 data-i18n="create.submit_pr_title">Submit Pull Request</h4>
-        <p data-i18n="create.submit_pr_hint">Click the button below – <strong>github-actions[bot]</strong> will automatically create a Pull Request for you. No token needed.</p>
+      <div id="pr-section" class="pr-trigger" style="display:none">
+        <h4 data-i18n="create.submit_pr_title">Auto-create Pull Request</h4>
+        <label class="form-label" for="pat-input" data-i18n="create.submit_pat_label">GitHub Token (public_repo scope)</label>
+        <p class="form-hint" data-i18n="create.submit_pat_hint">Provide a GitHub Personal Access Token to automatically create a branch and open a PR. Your token is not stored anywhere.</p>
         <div class="pr-trigger-row">
-          <a class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer"
-             data-i18n="create.submit_pr_btn">Open Pull Request →</a>
+          <input type="password" id="pat-input" class="form-input"
+                 data-i18n-placeholder="create.submit_pat_placeholder"
+                 placeholder="ghp_…" autocomplete="off" style="flex:1;min-width:0" />
+          <button class="btn btn-primary" id="btn-submit-pr" onclick="submitPR()"
+                  data-i18n="create.submit_pr_btn">Create Branch &amp; Open PR</button>
         </div>
+        <div id="pr-status" class="pr-status" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -1271,8 +1276,12 @@ function openCreateModal() {
   if (extraContainer) extraContainer.innerHTML = '';
   generatedKey = null; generatedData = null;
   /* hide PR submit section */
-  const prFallback = document.getElementById('pr-fallback');
-  if (prFallback) prFallback.style.display = 'none';
+  const prSection = document.getElementById('pr-section');
+  if (prSection) prSection.style.display = 'none';
+  const patInput = document.getElementById('pat-input');
+  if (patInput) patInput.value = '';
+  const prStatus = document.getElementById('pr-status');
+  if (prStatus) { prStatus.style.display = 'none'; prStatus.textContent = ''; prStatus.className = 'pr-status'; }
   document.getElementById('f-username').focus();
 }
 
@@ -1359,15 +1368,6 @@ async function handleCreate() {
   generatedKey  = key;
   generatedData = { username, name, bio, skills, socials, projects: [], language, key_hash: keyHash, created_at: new Date().toISOString() };
 
-  /* Build pre-filled GitHub issue URL (triggers automatic PR creation via workflow) */
-  let submitUrl = '';
-  if (typeof jsyaml !== 'undefined') {
-    const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
-    const issueTitle  = encodeURIComponent(`[Profil Submission] ${username}`);
-    const issueBody   = encodeURIComponent(profileYaml);
-    submitUrl = `https://github.com/Smapifan/Dev-Profile/issues/new?title=${issueTitle}&body=${issueBody}`;
-  }
-
   btn.disabled = false;
   btn.textContent = t('create.submit');
 
@@ -1377,13 +1377,13 @@ async function handleCreate() {
   document.getElementById('success-msg').textContent  = t('create.success_message', { username });
   document.getElementById('key-value').textContent    = key;
 
-  /* Always show the PR submit section with the pre-filled URL */
-  const prFallback = document.getElementById('pr-fallback');
-  if (prFallback) {
-    const a = prFallback.querySelector('a');
-    if (a && submitUrl) a.href = submitUrl;
-    prFallback.style.display = submitUrl ? '' : 'none';
-  }
+  /* Show the PR submit section */
+  const prSection = document.getElementById('pr-section');
+  if (prSection) prSection.style.display = '';
+  const prStatus = document.getElementById('pr-status');
+  if (prStatus) { prStatus.style.display = 'none'; prStatus.textContent = ''; prStatus.className = 'pr-status'; }
+  const btnPR = document.getElementById('btn-submit-pr');
+  if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
 }
 
 async function copyKey() {
@@ -1397,6 +1397,72 @@ async function copyKey() {
     setTimeout(() => { btn.textContent = orig; }, 2200);
   } catch {
     showToast('❌', t('errors.network') || 'Copy failed');
+  }
+}
+
+async function submitPR() {
+  if (!generatedData) return;
+  const patInput = document.getElementById('pat-input');
+  const pat = (patInput ? patInput.value : '').trim();
+  const btnPR  = document.getElementById('btn-submit-pr');
+  const status = document.getElementById('pr-status');
+
+  if (!pat) {
+    if (status) {
+      status.textContent = t('create.submit_pr_error') || 'Please enter a GitHub token.';
+      status.className = 'pr-status pr-status-err';
+      status.style.display = '';
+    }
+    if (patInput) patInput.focus();
+    return;
+  }
+
+  if (btnPR)  { btnPR.disabled = true; btnPR.textContent = t('create.submit_pr_working') || 'Creating…'; }
+  if (status) { status.style.display = 'none'; status.textContent = ''; status.className = 'pr-status'; }
+
+  const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
+  const username    = generatedData.username;
+  const issueTitle  = `[Profil Submission] ${username}`;
+
+  try {
+    const res = await fetch('https://api.github.com/repos/Smapifan/Dev-Profile/issues', {
+      method: 'POST',
+      headers: {
+        'Authorization': `token ${pat}`,
+        'Content-Type':  'application/json',
+        'Accept':        'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      },
+      body: JSON.stringify({ title: issueTitle, body: profileYaml })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (status) {
+        const link = data.html_url ? ` <a href="${data.html_url}" target="_blank" rel="noopener noreferrer">#${data.number}</a>` : '';
+        status.innerHTML = (t('create.submit_pr_success') || '✅ Issue created!') + link;
+        status.className = 'pr-status pr-status-ok';
+        status.style.display = '';
+      }
+      if (btnPR) { btnPR.disabled = true; btnPR.textContent = t('create.submit_pr_btn'); }
+      if (patInput) patInput.value = '';
+    } else {
+      const body = await res.json().catch(() => ({}));
+      const msg  = (body && body.message) ? body.message : res.status;
+      if (status) {
+        status.textContent = (t('create.submit_pr_error') || 'Could not create issue.') + ` (${msg})`;
+        status.className = 'pr-status pr-status-err';
+        status.style.display = '';
+      }
+      if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
+    }
+  } catch (err) {
+    if (status) {
+      status.textContent = t('create.submit_pr_error') || 'Network error. Please try again.';
+      status.className = 'pr-status pr-status-err';
+      status.style.display = '';
+    }
+    if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
   }
 }
 

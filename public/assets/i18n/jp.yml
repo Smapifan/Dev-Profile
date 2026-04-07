@@ -69,7 +69,7 @@ create:
   error_username_invalid: ユーザー名には文字、数字、ハイフン、アンダースコアのみ使用できます。
   error_required: このフィールドは必須です。
   download_yaml: プロフィールYAMLをダウンロード
-  pr_instructions: "プロフィールを公開するには、下のボタンをクリックしてください – GitHub Actions が自動的に Pull Request を作成します。トークン不要。"
+  pr_instructions: "プロフィールを公開するには、下にGitHubトークンを入力してボタンをクリックしてください – GitHub Actions が自動的にブランチと Pull Request を作成します。"
   section_platforms: プラットフォームリンク
   field_github: GitHubプロフィール
   field_github_placeholder: "https://github.com/username"
@@ -80,9 +80,14 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ リンクを追加"
   remove_link: 削除
-  submit_pr_title: Pull Request を送信
-  submit_pr_hint: "下のボタンをクリックしてください – github-actions[bot] が自動的にブランチと Pull Request を作成します。トークン不要。"
-  submit_pr_btn: "Pull Request を開く →"
+  submit_pr_title: プルリクエストを自動作成
+  submit_pat_label: "GitHubトークン（public_repoスコープ）"
+  submit_pat_placeholder: "ghp_…"
+  submit_pat_hint: "GitHubの個人アクセストークンを入力すると、ブランチが自動作成されPRが開きます。トークンはどこにも保存されません。"
+  submit_pr_btn: "ブランチ作成 & PR作成"
+  submit_pr_working: "PR作成中…"
+  submit_pr_success: "✅ Issueを作成しました！まもなくPRが開きます。"
+  submit_pr_error: "Issueを作成できませんでした。トークンを確認して再試行してください。"
   error_invalid_url: "有効なURLを入力してください（https://で始まる必要があります）。"
   error_github_url: "有効なGitHubプロフィールURLを入力してください（例: https://github.com/username）"
   error_nexusmods_url: "有効なNexus ModsプロフィールURLを入力してください（例: https://www.nexusmods.com/users/12345）"

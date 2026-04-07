@@ -1424,6 +1424,12 @@ async function submitPR() {
   const username    = generatedData.username;
   const issueTitle  = `[Profil Submission] ${username}`;
 
+  // Base64-encode the YAML to protect profile data and prevent special-character
+  // issues that can cause HTTP 422 errors when creating the issue via the API.
+  const yamlBytes = new TextEncoder().encode(profileYaml);
+  const binaryStr = Array.from(yamlBytes, b => String.fromCharCode(b)).join('');
+  const issueBody = '<!-- profile-yaml-b64 -->\n' + btoa(binaryStr);
+
   try {
     const res = await fetch('https://api.github.com/repos/Smapifan/Dev-Profile/issues', {
       method: 'POST',
@@ -1433,7 +1439,7 @@ async function submitPR() {
         'Accept':        'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28'
       },
-      body: JSON.stringify({ title: issueTitle, body: profileYaml })
+      body: JSON.stringify({ title: issueTitle, body: issueBody })
     });
 
     if (res.ok) {

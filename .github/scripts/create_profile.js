@@ -29,6 +29,7 @@ const PROFILES_YML = path.resolve(__dirname, '../../profiles.yml');
 const PROFILES_DIR = path.resolve(__dirname, '../../profiles');
 
 const SUPPORTED_LANGS = new Set(['en', 'de', 'es', 'fr', 'it', 'jp', 'cn']);
+const DEFAULT_LANGUAGE = 'en';
 
 // ---------- Argument parsing ----------
 
@@ -160,6 +161,8 @@ function writeProfileFiles(profileDir, username, profileData, isNew) {
   const demoIndexPath = path.join(PROFILES_DIR, 'demo', 'index.html');
   if (fs.existsSync(demoIndexPath)) {
     let html = fs.readFileSync(demoIndexPath, 'utf8');
+    // username is validated to [a-zA-Z0-9_-] so it cannot contain '$', '&' or
+    // other special replacement-string characters — safe to interpolate here.
     html = html.replace(/profiles\/demo\//g, `profiles/${username}/`);
     fs.writeFileSync(path.join(profileDir, 'index.html'), html, 'utf8');
   }
@@ -264,7 +267,7 @@ function mainFromYaml(yamlFile, allowUpdate) {
                   : [],
     socials,
     projects:   Array.isArray(data.projects) ? data.projects : [],
-    language:   SUPPORTED_LANGS.has(data.language) ? data.language : 'en',
+    language:   SUPPORTED_LANGS.has(data.language) ? data.language : DEFAULT_LANGUAGE,
     key_hash:   keyHash,
     // Preserve original created_at on updates; fall back to YAML value or now
     created_at: (allowUpdate && dirExists && existingCreatedAt) || data.created_at || new Date().toISOString(),
@@ -365,7 +368,7 @@ function main() {
     skills: opts.skills ? opts.skills.split(',').map(s => s.trim()).filter(Boolean) : [],
     socials,
     projects: [],
-    language: SUPPORTED_LANGS.has(opts.language) ? opts.language : 'en',
+    language: SUPPORTED_LANGS.has(opts.language) ? opts.language : DEFAULT_LANGUAGE,
     key_hash: keyHash,
     created_at: new Date().toISOString(),
   };

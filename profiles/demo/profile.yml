@@ -16,5 +16,7 @@ socials:
     url: https://www.curseforge.com/members/mustercf
 projects: []
 language: de
+# Demo profile key_hash is intentionally all-zeros.
+# sha256 never produces all-zeros, so the edit form will always reject key entry for this demo.
 key_hash: 0000000000000000000000000000000000000000000000000000000000000000
 created_at: 2024-01-01T00:00:00.000Z

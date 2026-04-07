@@ -66,6 +66,9 @@ jobs:
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
+          # Force-create/reset the branch so both new submissions and updates use the same
+          # branch name. Any open PR for this profile will be updated automatically by
+          # the force-push; review comments on the PR are preserved by GitHub.
           git checkout -B "profile/$USERNAME"
           git add "profiles/$USERNAME" profiles.yml
           ACTION_VERB="add"

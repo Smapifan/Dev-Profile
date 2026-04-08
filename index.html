@@ -488,23 +488,20 @@
     .success-icon { font-size: 3.5rem; }
     .success-step h3 { font-size: 1.2rem; font-weight: 700; }
     .success-step p  { color: var(--text-muted); font-size: 0.9rem; max-width: 400px; }
-    .key-card {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--green);
-      border-radius: var(--radius-md);
-      padding: 18px;
-    }
-    .key-label { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 8px; }
-    .key-value {
-      font-family: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
-      font-size: 0.95rem;
-      color: var(--green);
-      letter-spacing: 1.5px;
-      word-break: break-all;
-      margin-bottom: 12px;
-    }
+
     .success-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .steps-hint {
+      width: 100%;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: var(--text);
+      text-align: left;
+      line-height: 1.6;
+    }
+    .steps-hint strong { color: var(--accent); }
 
     /* ── Platform link fields ──────────────────────────────────── */
     .platform-fields { display: flex; flex-direction: column; gap: 8px; }
@@ -603,23 +600,9 @@
       max-width: 100% !important;
     }
     .pr-trigger-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
-    .pr-trigger input {
-      flex: 1;
-      min-width: 0;
-      background: var(--input-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 12px;
-      font-size: 0.88rem;
-      font-family: "SF Mono", "Fira Code", Consolas, monospace;
-      outline: none;
-      transition: border-color var(--transition);
-    }
-    .pr-trigger input:focus { border-color: var(--accent); }
-    .pr-status { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; min-height: 1.1em; }
-    .pr-status.success { color: var(--green); }
-    .pr-status.error   { color: var(--red); }
+    .pr-status { font-size: 0.85rem; margin-top: 12px; padding: 8px 12px; border-radius: 6px; max-width: 400px; text-align: center; }
+    .pr-status-ok  { color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); }
+    .pr-status-err { color: var(--red);   background: color-mix(in srgb, var(--red)   12%, transparent); }
 
     /* ── Social badges on profile cards ─────────────────────────── */
     .card-socials { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
@@ -880,31 +863,19 @@
       <div class="success-icon">🎉</div>
       <h3 data-i18n="create.success_title">Profile Created!</h3>
       <p id="success-msg"></p>
-      <div class="key-card">
-        <div class="key-label" data-i18n="create.key_info">
-          Save this key — you'll need it to edit your profile later. It is never shown again.
+      <div id="pr-section" class="pr-trigger">
+        <h4 data-i18n="create.submit_pr_title">Submit Profile via GitHub Issue</h4>
+        <p class="form-hint" data-i18n="create.submit_pat_hint">Click the button below to open a pre-filled GitHub Issue. Just log in with your GitHub account and click "Submit new issue" — GitHub Actions will create a Pull Request automatically.</p>
+        <div class="pr-trigger-row" style="justify-content:center">
+          <button class="btn btn-primary" id="btn-submit-pr" onclick="openGitHubIssue()"
+                  data-i18n="create.submit_pr_btn">Open GitHub Issue</button>
         </div>
-        <div class="key-value" id="key-value"></div>
-        <button class="btn" id="btn-copy-key" onclick="copyKey()" data-i18n="create.copy_key">Copy Key</button>
+        <div id="pr-status" class="pr-status" style="display:none"></div>
       </div>
       <div class="success-actions">
-        <button class="btn btn-primary" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
+        <button class="btn" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
         <button class="btn" onclick="closeCreateModal()" data-i18n="btn_close">Close</button>
       </div>
-      <div class="pr-trigger">
-        <h4 data-i18n="create.submit_pr_title">Auto-create Pull Request</h4>
-        <p data-i18n="create.submit_pat_hint">Provide a GitHub Personal Access Token to automatically create a branch and open a PR. Your token is not stored anywhere.</p>
-        <div class="pr-trigger-row">
-          <input type="password" id="pat-input"
-                 data-i18n-placeholder="create.submit_pat_placeholder"
-                 placeholder="ghp_…"
-                 autocomplete="off" spellcheck="false" />
-          <button class="btn btn-primary" onclick="triggerWorkflow()" id="btn-pr"
-                  data-i18n="create.submit_pr_btn">Create Branch &amp; Open PR</button>
-        </div>
-        <div class="pr-status" id="pr-status" role="status" aria-live="polite"></div>
-      </div>
-      <p class="form-hint" data-i18n="create.pr_instructions">Open a Pull Request with your YAML files to publish your profile.</p>
     </div>
   </div>
 </div>
@@ -920,7 +891,6 @@ const I18N_FALLBACK = {};
 
 let i18n     = {};
 let allProfiles   = [];
-let generatedKey  = null;
 let generatedData = null;
 
 /* ── Platform definitions ───────────────────────────────────────────── */
@@ -975,7 +945,7 @@ function platformIconImg(type, size = 16) {
   /* Sanitize values used in attribute strings — all come from the hardcoded PLATFORMS map but
      defensive validation prevents issues if the map is ever extended with untrusted data */
   const abbr  = (alt.slice(0, 2).toUpperCase().replace(/[^A-Z0-9]/g, '') || '??');
-  const color = /^[0-9a-fA-F]{3,6}$/.test(p.color) ? p.color : '8b949e';
+  const color = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(p.color) ? p.color : '8b949e';
   if (!src) {
     return `<span style="font-size:${Math.round(size * 0.65)}px;font-weight:700;color:#${color};line-height:1;">${abbr}</span>`;
   }
@@ -1043,72 +1013,6 @@ function isValidNexusModsProfile(url) {
 }
 function isValidCurseForgeProfile(url) {
   return PLATFORMS.curseforge.pattern.test(url);
-}
-
-/* ── Trigger Workflow via GitHub Dispatch API ───────────────────────── */
-async function triggerWorkflow() {
-  const pat = (document.getElementById('pat-input').value || '').trim();
-  const statusEl = document.getElementById('pr-status');
-  const btn = document.getElementById('btn-pr');
-
-  statusEl.className = 'pr-status';
-  statusEl.textContent = '';
-
-  if (!pat) {
-    statusEl.className = 'pr-status error';
-    statusEl.textContent = t('create.submit_pr_error') || 'Please provide a GitHub token.';
-    return;
-  }
-  if (!generatedData) {
-    statusEl.className = 'pr-status error';
-    statusEl.textContent = t('create.submit_pr_error') || 'No profile data. Please fill in the form first.';
-    return;
-  }
-
-  btn.disabled = true;
-  statusEl.className = 'pr-status';
-  statusEl.textContent = t('create.submit_pr_working') || 'Creating PR…';
-
-  try {
-    const inputs = {
-      username:  generatedData.username,
-      name:      generatedData.name,
-      bio:       generatedData.bio || '',
-      skills:    (generatedData.skills || []).join(','),
-      socials:   JSON.stringify(generatedData.socials || []),
-      language:  generatedData.language || 'en',
-      key_hash:  generatedData.key_hash || '',
-    };
-
-    const resp = await fetch(
-      'https://api.github.com/repos/Smapifan/Dev-Profile/actions/workflows/profile-pr.yml/dispatches',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${pat}`,
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ref: 'main', inputs }),
-      }
-    );
-
-    if (resp.status === 204) {
-      statusEl.className = 'pr-status success';
-      statusEl.textContent = t('create.submit_pr_success') || '✅ Workflow triggered! A PR will be opened shortly.';
-      /* Keep the button disabled after success to prevent duplicate PR creation */
-      btn.textContent = t('create.submit_pr_success') || '✅ PR triggered!';
-    } else {
-      statusEl.className = 'pr-status error';
-      statusEl.textContent = `${t('create.submit_pr_error') || 'Error'} (HTTP ${resp.status})`;
-      btn.disabled = false;
-    }
-  } catch (err) {
-    statusEl.className = 'pr-status error';
-    statusEl.textContent = `${t('create.submit_pr_error') || 'Error'}: ${err.message}`;
-    btn.disabled = false;
-  }
 }
 
 /* ── i18n ──────────────────────────────────────────────────────────── */
@@ -1326,14 +1230,12 @@ function openCreateModal() {
   extraLinkIds = [];
   const extraContainer = document.getElementById('extra-links');
   if (extraContainer) extraContainer.innerHTML = '';
-  /* reset PR trigger */
-  const patInput = document.getElementById('pat-input');
-  if (patInput) patInput.value = '';
+  generatedData = null;
+  /* reset PR submit section */
   const prStatus = document.getElementById('pr-status');
-  if (prStatus) { prStatus.textContent = ''; prStatus.className = 'pr-status'; }
-  const btnPr = document.getElementById('btn-pr');
-  if (btnPr) { btnPr.disabled = false; btnPr.textContent = t('create.submit_pr_btn') || 'Create Branch & Open PR'; }
-  generatedKey = null; generatedData = null;
+  if (prStatus) { prStatus.style.display = 'none'; prStatus.textContent = ''; prStatus.className = 'pr-status'; }
+  const btnPR = document.getElementById('btn-submit-pr');
+  if (btnPR) { btnPR.disabled = false; }
   document.getElementById('f-username').focus();
 }
 
@@ -1348,18 +1250,6 @@ function clearErrors() {
 function showError(id, msg) {
   const el = document.getElementById(id);
   if (el) { el.textContent = msg; el.style.display = 'block'; }
-}
-
-async function generateKey() {
-  const arr = new Uint8Array(20);
-  crypto.getRandomValues(arr);
-  return Array.from(arr, b => b.toString(16).padStart(2,'0')).join('');
-}
-
-async function sha256(msg) {
-  const buf  = new TextEncoder().encode(msg);
-  const hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2,'0')).join('');
 }
 
 async function handleCreate() {
@@ -1410,37 +1300,61 @@ async function handleCreate() {
     return;
   }
 
-  const btn = document.getElementById('btn-submit');
-  btn.disabled = true;
-  btn.textContent = t('create.generating') || 'Generating…';
-
-  const key     = await generateKey();
-  const keyHash = await sha256(key);
-
-  generatedKey  = key;
-  generatedData = { username, name, bio, skills, socials, projects: [], language, key_hash: keyHash, created_at: new Date().toISOString() };
-
-  btn.disabled = false;
-  btn.textContent = t('create.submit');
+  generatedData = { username, name, bio, skills, socials, projects: [], language, created_at: new Date().toISOString() };
 
   document.getElementById('form-step').style.display = 'none';
   const ss = document.getElementById('success-step');
   ss.classList.add('open');
-  document.getElementById('success-msg').textContent  = t('create.success_message', { username });
-  document.getElementById('key-value').textContent    = key;
+  document.getElementById('success-msg').textContent = t('create.success_message', { username });
+
+  const prStatus = document.getElementById('pr-status');
+  if (prStatus) { prStatus.style.display = 'none'; prStatus.textContent = ''; prStatus.className = 'pr-status'; }
+  const btnPR = document.getElementById('btn-submit-pr');
+  if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
 }
 
-async function copyKey() {
-  if (!generatedKey) return;
-  try {
-    await navigator.clipboard.writeText(generatedKey);
-    const btn = document.getElementById('btn-copy-key');
-    const orig = btn.textContent;
-    btn.textContent = t('create.copied') || 'Copied!';
-    showToast('✅', t('create.copied') || 'Copied to clipboard!');
-    setTimeout(() => { btn.textContent = orig; }, 2200);
-  } catch {
-    showToast('❌', t('errors.network') || 'Copy failed');
+function openGitHubIssue() {
+  if (!generatedData) return;
+  const btnPR  = document.getElementById('btn-submit-pr');
+  const status = document.getElementById('pr-status');
+
+  const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
+  const username    = generatedData.username;
+  const issueTitle  = `[Profile Submission] ${username}`;
+
+  // Base64-encode the YAML to avoid special-character issues in the URL.
+  const yamlBytes = new TextEncoder().encode(profileYaml);
+  const binaryStr = Array.from(yamlBytes, b => String.fromCharCode(b)).join('');
+  const issueBody = '<!-- profile-yaml-b64 -->\n' + btoa(binaryStr);
+
+  const issueUrl = 'https://github.com/Smapifan/Dev-Profile/issues/new'
+    + '?title=' + encodeURIComponent(issueTitle)
+    + '&body='  + encodeURIComponent(issueBody);
+
+  const win = window.open(issueUrl, '_blank', 'noopener,noreferrer');
+
+  if (win) {
+    if (status) {
+      status.textContent = t('create.submit_pr_success') || '✅ GitHub opened in a new tab. Submit the issue to trigger the workflow.';
+      status.className = 'pr-status pr-status-ok';
+      status.style.display = '';
+    }
+    if (btnPR) { btnPR.disabled = true; }
+  } else {
+    // Pop-up was blocked – provide a direct link instead
+    if (status) {
+      status.innerHTML = '';
+      const msg = document.createTextNode(t('create.submit_pr_popup_blocked') || 'Pop-up blocked. ');
+      const link = document.createElement('a');
+      link.href   = issueUrl;
+      link.target = '_blank';
+      link.rel    = 'noopener noreferrer';
+      link.textContent = t('create.submit_pr_open_link') || 'Open GitHub Issue';
+      status.appendChild(msg);
+      status.appendChild(link);
+      status.className = 'pr-status pr-status-ok';
+      status.style.display = '';
+    }
   }
 }
 

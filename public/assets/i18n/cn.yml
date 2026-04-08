@@ -76,7 +76,7 @@ create:
   add_link: "+ 添加链接"
   remove_link: 删除
   submit_pr_title: 通过 GitHub Issue 提交资料
-  submit_pat_hint: "点击按钮在浏览器中打开预填好的 GitHub Issue。使用您的 GitHub 账户登录，点击"提交新 Issue"— GitHub Actions 会自动处理后续步骤。无需令牌。"
+  submit_pat_hint: "点击按钮在浏览器中打开预填好的 GitHub Issue。使用您的 GitHub 账户登录，点击\u201C提交新 Issue\u201D\u2014 GitHub Actions 会自动处理后续步骤。无需令牌。"
   submit_pr_btn: "打开 GitHub Issue"
   submit_pr_success: "✅ GitHub 已在新标签页中打开。提交 Issue 即可触发工作流程。"
   submit_pr_popup_blocked: "弹出窗口被阻止。"

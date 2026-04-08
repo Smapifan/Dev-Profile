@@ -26,7 +26,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const PROFILES_YML = path.resolve(__dirname, '../../profiles.yml');
-const PROFILES_DIR = path.resolve(__dirname, '../../profiles');
+const PROFILES_DIR = path.resolve(__dirname, '../../Dev-Profile');
 
 const SUPPORTED_LANGS = new Set(['en', 'de', 'es', 'fr', 'it', 'jp', 'cn']);
 const DEFAULT_LANGUAGE = 'en';
@@ -163,7 +163,7 @@ function writeProfileFiles(profileDir, username, profileData, isNew) {
     let html = fs.readFileSync(demoIndexPath, 'utf8');
     // username is validated to [a-zA-Z0-9_-] so it cannot contain '$', '&' or
     // other special replacement-string characters — safe to interpolate here.
-    html = html.replace(/profiles\/demo\//g, `profiles/${username}/`);
+    html = html.replace(/Dev-Profile\/demo\//g, `Dev-Profile/${username}/`);
     fs.writeFileSync(path.join(profileDir, 'index.html'), html, 'utf8');
   }
 

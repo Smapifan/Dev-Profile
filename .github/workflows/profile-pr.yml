@@ -79,7 +79,7 @@ jobs:
           # branch name. Any open PR for this profile will be updated automatically by
           # the force-push; review comments on the PR are preserved by GitHub.
           git checkout -B "profile/$USERNAME"
-          git add "profiles/$USERNAME" profiles.yml
+          git add "Dev-Profile/$USERNAME" profiles.yml
           ACTION_VERB="add"
           if [[ "$UPDATE_FLAG" == "--update" ]]; then ACTION_VERB="update"; fi
           git diff --cached --quiet || git commit -m "feat: ${ACTION_VERB} profile '$USERNAME' from issue #${{ github.event.issue.number }}"

@@ -26,7 +26,7 @@ profile-issue.yml triggers (on: issues: labeled)
           ↓
 Workflow parses username, bio, skills, socials, language from issue body
           ↓
-create_profile.js creates:  profiles/<username>/{profile.yml, mods.yml, mods_cache.yml, index.html, uploads/.gitkeep}
+create_profile.js creates:  Dev-Profile/<username>/{profile.yml, mods.yml, mods_cache.yml, index.html, uploads/.gitkeep}
           ↓
 git checkout -b profile/<username>-<timestamp>
 git commit -m "feat: add profile '<username>'"
@@ -86,7 +86,7 @@ Bot comments PR link on issue  →  Issue closed automatically
 │           ├── it.yml             # Italian
 │           ├── jp.yml             # Japanese
 │           └── cn.yml             # Chinese
-├── profiles/
+├── Dev-Profile/
 │   └── demo/
 │       ├── profile.yml            # Profile data (name, bio, skills, socials, key_hash, …)
 │       ├── mods.yml               # List of mod IDs to track
@@ -121,14 +121,14 @@ Bot comments PR link on issue  →  Issue closed automatically
 
 ### Option C – Manual PR
 
-1. Create the folder `profiles/<username>/` with the files below.
+1. Create the folder `Dev-Profile/<username>/` with the files below.
 2. Add your entry to `profiles.yml`.
 3. Open a Pull Request.
 
 **Required files:**
 
 ```yaml
-# profiles/<username>/profile.yml
+# Dev-Profile/<username>/profile.yml
 username: yourname
 name: Your Name
 bio: "Short bio"
@@ -152,7 +152,7 @@ created_at: "2024-01-01T00:00:00.000Z"
 ```
 
 ```yaml
-# profiles/<username>/mods.yml
+# Dev-Profile/<username>/mods.yml
 # Nexus Mods:  { nexusmods: "gameSlug/modId" }
 # CurseForge:  { curseforge: projectId }
 - nexusmods: skyrim/12345
@@ -224,7 +224,7 @@ All UI strings are stored in `public/assets/i18n/<lang>.yml`.
 To add a new language:
 1. Copy `public/assets/i18n/en.yml` to `public/assets/i18n/<lang>.yml` (use a BCP 47 language code).
 2. Translate all values.
-3. Add the language code to `SUPPORTED_LANGS` in `index.html` and `profiles/*/index.html`.
+3. Add the language code to `SUPPORTED_LANGS` in `index.html` and `Dev-Profile/*/index.html`.
 
 ### Platform-specific keys
 

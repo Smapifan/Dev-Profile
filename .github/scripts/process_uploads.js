@@ -18,7 +18,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PROFILES_YML = path.resolve(__dirname, '../../profiles.yml');
-const PROFILES_DIR = path.resolve(__dirname, '../../profiles');
+const PROFILES_DIR = path.resolve(__dirname, '../../Dev-Profile');
 
 // Files to exclude from the index
 const EXCLUDED_FILES = new Set(['.gitkeep', '.gitignore', '.DS_Store']);

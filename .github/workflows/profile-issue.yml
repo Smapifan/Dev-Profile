@@ -1,4 +1,4 @@
-name: Create Profile PR from Issue
+name: Create Profile from Issue
 
 # Triggered automatically when a "profile-submission" label is added to an issue.
 # The label is applied by GitHub when a user opens an issue using the
@@ -6,6 +6,7 @@ name: Create Profile PR from Issue
 #
 # No Personal Access Token is required – the workflow runs entirely with the
 # built-in GITHUB_TOKEN (github-actions[bot]).
+# The profile is committed directly to main – no PR review required.
 
 on:
   issues:
@@ -18,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
       issues: write
 
     steps:
@@ -120,64 +120,30 @@ jobs:
             --socials  "${{ steps.parse.outputs.socials }}" \
             --language "${{ steps.parse.outputs.language }}"
 
-      - name: Create branch and open PR
-        id: create_pr
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit directly to main
         run: |
           USERNAME="${{ steps.validate.outputs.username }}"
-          TIMESTAMP=$(date -u +%Y%m%dT%H%M%S)
-          BRANCH="profile/${USERNAME}-${TIMESTAMP}"
 
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git checkout -b "$BRANCH"
           git add "profiles/${USERNAME}/" profiles.yml
-          git commit -m "feat: add profile '${USERNAME}' (via issue #${{ github.event.issue.number }})"
-          git push origin "$BRANCH"
+          git diff --cached --quiet || git commit -m "feat: add profile '${USERNAME}' (via issue #${{ github.event.issue.number }})"
+          git push origin HEAD:main
 
-          PR_URL=$(gh pr create \
-            --base main \
-            --head "$BRANCH" \
-            --title "feat: add profile '${USERNAME}'" \
-            --body "$(cat <<EOF
-          ## New Developer Profile: \`${USERNAME}\`
-
-          This Pull Request was automatically created by **github-actions[bot]** from issue #${{ github.event.issue.number }} – no Personal Access Token required.
-
-          ### Profile details
-          - **Username:** \`${USERNAME}\`
-          - **Display name:** ${{ steps.parse.outputs.display_name }}
-          - **Language:** ${{ steps.parse.outputs.language }}
-          - **Submitted via:** Issue #${{ github.event.issue.number }}
-
-          ### Checklist
-          - [ ] Username is unique and valid
-          - [ ] Bio and links look correct
-          - [ ] No sensitive data included
-
-          > The profile key hash is stored in \`profiles/${USERNAME}/profile.yml\`. The raw key was generated server-side and is printed once in the workflow log.
-          EOF
-          )")
-
-          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
-          echo "branch=$BRANCH"  >> "$GITHUB_OUTPUT"
-
-      - name: Comment on issue with PR link
+      - name: Comment on issue with success
         uses: actions/github-script@v7
         with:
           script: |
-            const prUrl = '${{ steps.create_pr.outputs.pr_url }}';
             const username = '${{ steps.validate.outputs.username }}';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: `✅ **Profile PR created!**\n\nA branch and Pull Request have been automatically opened by **github-actions[bot]** — no Personal Access Token required.\n\n🔗 **PR:** ${prUrl}\n\nThe maintainer will review and merge your profile. Thank you for submitting, @${username}!`,
+              body: `✅ **Profile created!**\n\nYour developer profile has been automatically added to the repository by **github-actions[bot]**.\n\n**Username:** \`${username}\`\n\nThank you for submitting, @${username}!`,
             });
 
-      - name: Close issue after PR creation
+      - name: Close issue after profile creation
         uses: actions/github-script@v7
         with:
           script: |

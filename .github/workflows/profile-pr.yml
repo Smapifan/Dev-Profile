@@ -8,8 +8,9 @@ on:
 jobs:
   create-profile-pr:
     if: |
-      startsWith(github.event.issue.title, '[Profil Submission]') ||
-      startsWith(github.event.issue.title, '[Profil Update]')
+      (startsWith(github.event.issue.title, '[Profile Submission]') ||
+       startsWith(github.event.issue.title, '[Profile Update]')) &&
+      contains(github.event.issue.body, '<!-- profile-yaml-b64 -->')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -44,7 +45,7 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
           # Detect update vs. new submission
-          if [[ "$ISSUE_TITLE" == *"[Profil Update]"* ]]; then
+          if [[ "$ISSUE_TITLE" == *"[Profile Update]"* ]]; then
             echo "UPDATE_FLAG=--update" >> "$GITHUB_ENV"
           else
             echo "UPDATE_FLAG=" >> "$GITHUB_ENV"

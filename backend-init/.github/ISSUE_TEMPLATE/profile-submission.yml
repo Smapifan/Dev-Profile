@@ -1,0 +1,78 @@
+name: New Developer Profile
+description: Submit a new developer profile to the Dev-Profile repository.
+title: "[Profile Submission] <your username>"
+labels:
+  - profile-submission
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill in the form below to submit your developer profile.
+        A Pull Request will be automatically created and opened for review.
+        **All fields except Username and Display Name are optional.**
+
+  - type: input
+    id: username
+    attributes:
+      label: Username
+      description: Your username (letters, numbers, hyphens, underscores only – max 40 chars).
+      placeholder: yourname
+    validations:
+      required: true
+
+  - type: input
+    id: display_name
+    attributes:
+      label: Display Name
+      description: Your display name as it will appear on your profile.
+      placeholder: Your Name
+    validations:
+      required: true
+
+  - type: textarea
+    id: bio
+    attributes:
+      label: Bio
+      description: Short description about yourself (optional).
+      placeholder: Tell us about yourself…
+    validations:
+      required: false
+
+  - type: input
+    id: skills
+    attributes:
+      label: Skills
+      description: Comma-separated list of your skills (optional).
+      placeholder: "JavaScript, Modding, Python"
+    validations:
+      required: false
+
+  - type: textarea
+    id: platform_links
+    attributes:
+      label: Platform Links
+      description: |
+        Your social/platform profile links, one per line (optional).
+        Supported: GitHub, Nexus Mods, CurseForge, Twitter/X, Discord, YouTube, Twitch, or any URL.
+      placeholder: |
+        https://github.com/yourname
+        https://www.nexusmods.com/users/123456
+        https://www.curseforge.com/members/yourname
+    validations:
+      required: false
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Preferred Language
+      description: Your preferred display language for your profile page.
+      options:
+        - en
+        - de
+        - es
+        - fr
+        - it
+        - jp
+        - cn
+    validations:
+      required: false

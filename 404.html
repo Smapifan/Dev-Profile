@@ -58,6 +58,13 @@
     // /{username}  or  /{username}/{tab}
     // Redirect to the real profile HTML page.
     // The profile page will rewrite its own URL back to the clean form.
+    //
+    // URL construction note: `base` is already '/Dev-Profile' (the GitHub Pages
+    // project root).  Profile HTML files live in the *subdirectory* also named
+    // 'Dev-Profile' inside the repository, so the full URL segments are:
+    //   /Dev-Profile           ← GitHub Pages project base
+    //   /Dev-Profile/profiles  ← repo-relative path to profile HTML files
+    //   /{username}/index.html
     var profileUrl = origin + base + '/Dev-Profile/profiles/' + encodeURIComponent(username) + '/index.html';
     if (tab) profileUrl += '#' + encodeURIComponent(tab);
     window.location.replace(profileUrl);

@@ -201,9 +201,7 @@ console.log(`  name     : ${profile.name}`);
 console.log(`  language : ${profile.language}`);
 console.log(`  skills   : ${profile.skills.length}`);
 console.log(`  socials  : ${profile.socials.length}`);
-// Output username for use in workflow steps
-console.log(`::set-output name=username::${username}`);
-// Also write to GITHUB_OUTPUT if available
+// Write username to GITHUB_OUTPUT for use in subsequent workflow steps
 const githubOutput = process.env.GITHUB_OUTPUT;
 if (githubOutput) {
   fs.appendFileSync(githubOutput, `username=${username}\n`, 'utf8');

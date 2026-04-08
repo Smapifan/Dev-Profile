@@ -21,6 +21,8 @@ on:
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout Dev-Profile (source of setup files)
         uses: actions/checkout@v4

@@ -160,3 +160,4 @@ console.log(`  language : ${profile.language}`);
 console.log(`  skills   : ${skills.length} item(s)`);
 console.log(`  socials  : ${socials.length} item(s)`);
 console.log(`  key_hash : ${keyHash ? 'provided by submitter' : 'will be generated'}`);
+process.exit(0);

@@ -27,7 +27,7 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm install js-yaml
+        run: npm ci
 
       # ── Parse issue body into /tmp/profile.yml ───────────────────────────
       - name: Parse issue body
@@ -56,8 +56,8 @@ jobs:
             echo "$OUTPUT" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           else
-            # Extract the profile key (line after the "PROFILE KEY" banner, if present)
-            KEY=$(echo "$OUTPUT" | grep -A2 "PROFILE KEY" | grep -v "PROFILE KEY" | grep -v "===" | head -1 | tr -d '[:space:]')
+            # Extract the profile key: a 32-char hex string printed after the "PROFILE KEY" banner
+            KEY=$(echo "$OUTPUT" | awk '/PROFILE KEY \(save/{found=1; next} found && /^[a-f0-9]{32}$/{print; exit}')
             echo "profile_key=$KEY" >> $GITHUB_OUTPUT
           fi
 

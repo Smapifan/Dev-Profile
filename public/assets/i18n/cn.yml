@@ -58,18 +58,13 @@ create:
   field_socials_placeholder: "https://github.com/yourname"
   field_language: 首选语言
   submit: 创建资料
-  generating: 正在生成资料…
   success_title: 资料已创建！
-  success_message: "您的资料 '{{username}}' 已创建。已触发工作流程来设置您的模组缓存。"
-  key_info: "您的资料密钥显示如下。请保存它 – 您以后编辑资料时需要它。它不会再次显示。"
-  your_key: 您的资料密钥
-  copy_key: 复制密钥
-  copied: 已复制！
+  success_message: "您的资料 '{{username}}' 已准备就绪。点击下方按钮通过 GitHub Issue 提交 — 无需令牌。"
   error_username_taken: 此用户名已被使用。
   error_username_invalid: 用户名只能包含字母、数字、连字符和下划线。
   error_required: 此字段为必填项。
   download_yaml: 下载资料 YAML
-  pr_instructions: "要发布您的资料，请在下方输入 GitHub 令牌并点击按钮 – GitHub Actions 将自动创建分支和 Pull Request。"
+  pr_instructions: "点击按钮打开预填好的 GitHub Issue。使用您的 GitHub 账户登录并提交 Issue — GitHub Actions 会自动处理后续步骤。无需令牌。"
   section_platforms: 平台链接
   field_github: GitHub 个人主页
   field_github_placeholder: "https://github.com/username"
@@ -80,14 +75,13 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ 添加链接"
   remove_link: 删除
-  submit_pr_title: 自动创建 Pull Request
-  submit_pat_label: "GitHub 令牌（public_repo 权限）"
-  submit_pat_placeholder: "ghp_…"
-  submit_pat_hint: "提供 GitHub 个人访问令牌，系统将自动创建分支并开启 PR。您的令牌不会被保存在任何地方。"
-  submit_pr_btn: "创建分支 & 开启 PR"
-  submit_pr_working: "创建 PR 中…"
-  submit_pr_success: "✅ Issue 已创建！即将自动开启 PR。"
-  submit_pr_error: "无法创建 Issue，请检查您的令牌后重试。"
+  submit_pr_title: 通过 GitHub Issue 提交资料
+  submit_pat_hint: "点击按钮在浏览器中打开预填好的 GitHub Issue。使用您的 GitHub 账户登录，点击"提交新 Issue"— GitHub Actions 会自动处理后续步骤。无需令牌。"
+  submit_pr_btn: "打开 GitHub Issue"
+  submit_pr_success: "✅ GitHub 已在新标签页中打开。提交 Issue 即可触发工作流程。"
+  submit_pr_popup_blocked: "弹出窗口被阻止。"
+  submit_pr_open_link: "打开 GitHub Issue"
+  submit_pr_error: "无法打开 GitHub，请重试。"
   error_invalid_url: "请输入有效的网址（必须以 https:// 开头）。"
   error_github_url: "请输入有效的 GitHub 个人主页网址（例如 https://github.com/username）"
   error_nexusmods_url: "请输入有效的 Nexus Mods 个人主页网址（例如 https://www.nexusmods.com/users/12345）"

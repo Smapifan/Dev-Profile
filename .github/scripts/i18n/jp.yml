@@ -58,18 +58,13 @@ create:
   field_socials_placeholder: "https://github.com/yourname"
   field_language: 使用言語
   submit: プロフィールを作成
-  generating: プロフィールを生成中…
   success_title: プロフィールが作成されました！
-  success_message: "プロフィール '{{username}}' が作成されました。MODキャッシュのセットアップのためにワークフローが開始されました。"
-  key_info: "プロフィールキーが以下に表示されています。保存してください – プロフィールの編集に必要です。再表示はされません。"
-  your_key: あなたのプロフィールキー
-  copy_key: キーをコピー
-  copied: コピーしました！
+  success_message: "プロフィール '{{username}}' の準備ができました。下のボタンをクリックして、GitHub Issueで送信してください – トークン不要。"
   error_username_taken: このユーザー名はすでに使用されています。
   error_username_invalid: ユーザー名には文字、数字、ハイフン、アンダースコアのみ使用できます。
   error_required: このフィールドは必須です。
   download_yaml: プロフィールYAMLをダウンロード
-  pr_instructions: "プロフィールを追加するには、生成されたYAMLファイルでPull Requestを開いてください。"
+  pr_instructions: "ボタンをクリックして、あらかじめ入力されたGitHub Issueを開いてください。GitHubアカウントでログインしてIssueを送信するだけです – GitHub Actionsが残りを処理します。トークン不要。"
   section_platforms: プラットフォームリンク
   field_github: GitHubプロフィール
   field_github_placeholder: "https://github.com/username"
@@ -80,14 +75,13 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ リンクを追加"
   remove_link: 削除
-  submit_pr_title: プルリクエストを自動作成
-  submit_pat_label: "GitHubトークン（repo + workflowスコープ）"
-  submit_pat_placeholder: "ghp_…"
-  submit_pat_hint: "GitHubの個人アクセストークンを入力すると、ブランチが自動作成されPRが開きます。トークンはどこにも保存されません。"
-  submit_pr_btn: "ブランチ作成 & PR作成"
-  submit_pr_working: "PR作成中…"
-  submit_pr_success: "✅ ワークフローが起動しました！まもなくPRが開きます。"
-  submit_pr_error: "PRを作成できませんでした。トークンを確認して再試行してください。"
+  submit_pr_title: GitHub IssueでプロフィールをSubmit
+  submit_pat_hint: "ボタンをクリックして、ブラウザであらかじめ入力されたGitHub Issueを開きます。GitHubアカウントでログインして「新しいIssueを送信」をクリックしてください – GitHub Actionsが残りを処理します。トークン不要。"
+  submit_pr_btn: "GitHub Issueを開く"
+  submit_pr_success: "✅ GitHubが新しいタブで開きました。Issueを送信してワークフローを開始してください。"
+  submit_pr_popup_blocked: "ポップアップがブロックされました。"
+  submit_pr_open_link: "GitHub Issueを開く"
+  submit_pr_error: "GitHubを開けませんでした。もう一度お試しください。"
   error_invalid_url: "有効なURLを入力してください（https://で始まる必要があります）。"
   error_github_url: "有効なGitHubプロフィールURLを入力してください（例: https://github.com/username）"
   error_nexusmods_url: "有効なNexus ModsプロフィールURLを入力してください（例: https://www.nexusmods.com/users/12345）"

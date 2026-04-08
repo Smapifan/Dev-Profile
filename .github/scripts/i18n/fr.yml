@@ -58,18 +58,13 @@ create:
   field_socials_placeholder: "https://github.com/votrenom"
   field_language: Langue préférée
   submit: Créer le profil
-  generating: Génération du profil…
   success_title: Profil créé !
-  success_message: "Votre profil '{{username}}' a été créé. Un workflow a été déclenché pour configurer votre cache de mods."
-  key_info: "Votre clé de profil est affichée ci-dessous. Sauvegardez-la – vous en aurez besoin pour modifier votre profil plus tard. Elle ne sera plus affichée."
-  your_key: Votre clé de profil
-  copy_key: Copier la clé
-  copied: Copié !
+  success_message: "Votre profil '{{username}}' est prêt. Cliquez sur le bouton ci-dessous pour le soumettre via un Issue GitHub — aucun token requis."
   error_username_taken: Ce nom d'utilisateur est déjà pris.
   error_username_invalid: Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores.
   error_required: Ce champ est obligatoire.
   download_yaml: Télécharger le YAML du profil
-  pr_instructions: "Pour ajouter votre profil, ouvrez une Pull Request avec les fichiers YAML générés."
+  pr_instructions: "Cliquez sur le bouton pour ouvrir un Issue GitHub prérempli. Connectez-vous avec votre compte GitHub et soumettez l'issue — GitHub Actions s'occupe du reste. Aucun token requis."
   section_platforms: Liens de plateforme
   field_github: Profil GitHub
   field_github_placeholder: "https://github.com/username"
@@ -80,14 +75,13 @@ create:
   field_link_placeholder: "https://example.com/votreProfil"
   add_link: "+ Ajouter un lien"
   remove_link: Supprimer
-  submit_pr_title: Créer une Pull Request automatiquement
-  submit_pat_label: "Token GitHub (portée repo + workflow)"
-  submit_pat_placeholder: "ghp_…"
-  submit_pat_hint: "Fournissez un token d'accès personnel GitHub pour créer automatiquement une branche et ouvrir une PR. Votre token n'est stocké nulle part."
-  submit_pr_btn: "Créer une branche & Ouvrir une PR"
-  submit_pr_working: "Création de la PR…"
-  submit_pr_success: "✅ Workflow déclenché ! Une PR sera ouverte sous peu."
-  submit_pr_error: "Impossible de créer la PR. Vérifiez votre token et réessayez."
+  submit_pr_title: Soumettre le profil via un Issue GitHub
+  submit_pat_hint: "Cliquez sur le bouton pour ouvrir un Issue GitHub prérempli dans votre navigateur. Connectez-vous avec votre compte GitHub et cliquez sur \"Soumettre le nouvel issue\" — GitHub Actions s'occupe du reste. Aucun token requis."
+  submit_pr_btn: "Ouvrir un Issue GitHub"
+  submit_pr_success: "✅ GitHub ouvert dans un nouvel onglet. Soumettez l'issue pour déclencher le workflow."
+  submit_pr_popup_blocked: "Pop-up bloqué. "
+  submit_pr_open_link: "Ouvrir un Issue GitHub"
+  submit_pr_error: "Impossible d'ouvrir GitHub. Veuillez réessayer."
   error_invalid_url: "Veuillez entrer une URL valide (doit commencer par https://)."
   error_github_url: "Entrez une URL de profil GitHub valide (ex. https://github.com/username)"
   error_nexusmods_url: "Entrez une URL de profil Nexus Mods valide (ex. https://www.nexusmods.com/users/12345)"

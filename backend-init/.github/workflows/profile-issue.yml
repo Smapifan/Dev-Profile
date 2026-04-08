@@ -168,7 +168,7 @@ jobs:
       - name: Dispatch sync to Dev-Profile frontend (optional)
         # Only runs when the secret FRONTEND_DISPATCH_TOKEN is configured.
         # Set this secret to a PAT with `repo` scope for Smapifan/Dev-Profile.
-        if: env.FRONTEND_DISPATCH_TOKEN != ''
+        if: ${{ secrets.FRONTEND_DISPATCH_TOKEN != '' }}
         uses: actions/github-script@v7
         env:
           FRONTEND_DISPATCH_TOKEN: ${{ secrets.FRONTEND_DISPATCH_TOKEN }}

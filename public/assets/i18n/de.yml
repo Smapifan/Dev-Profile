@@ -76,7 +76,7 @@ create:
   add_link: "+ Link hinzufügen"
   remove_link: Entfernen
   submit_pr_title: Profil per GitHub Issue einreichen
-  submit_pat_hint: "Klicke auf den Button, um ein vorausgefülltes GitHub Issue in deinem Browser zu öffnen. Melde dich mit deinem GitHub-Konto an und klicke auf „Neues Issue einreichen" – GitHub Actions übernimmt den Rest. Kein Token erforderlich."
+  submit_pat_hint: "Klicke auf den Button, um ein vorausgefülltes GitHub Issue in deinem Browser zu öffnen. Melde dich mit deinem GitHub-Konto an und klicke auf \u201ENeues Issue einreichen\u201C \u2013 GitHub Actions übernimmt den Rest. Kein Token erforderlich."
   submit_pr_btn: "GitHub Issue öffnen"
   submit_pr_success: "✅ GitHub wurde in einem neuen Tab geöffnet. Reiche das Issue ein, um den Workflow auszulösen."
   submit_pr_popup_blocked: "Pop-up blockiert. "

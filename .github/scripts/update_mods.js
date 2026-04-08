@@ -16,7 +16,7 @@ const path = require('path');
 const https = require('https');
 
 const PROFILES_YML = path.resolve(__dirname, '../../profiles.yml');
-const PROFILES_DIR = path.resolve(__dirname, '../../profiles');
+const PROFILES_DIR = path.resolve(__dirname, '../../Dev-Profile');
 
 // ---------- minimal YAML helpers (no external deps needed for simple cases) ----------
 

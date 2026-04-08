@@ -102,7 +102,7 @@ jobs:
             echo "::error::No username could be parsed from the issue body."
             exit 1
           fi
-          if [ -d "profiles/$USERNAME" ]; then
+          if [ -d "Dev-Profile/$USERNAME" ]; then
             echo "::error::Profile '$USERNAME' already exists."
             exit 1
           fi
@@ -127,7 +127,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add "profiles/${USERNAME}/" profiles.yml
+          git add "Dev-Profile/${USERNAME}/" profiles.yml
           git diff --cached --quiet || git commit -m "feat: add profile '${USERNAME}' (via issue #${{ github.event.issue.number }})"
           git push origin HEAD:main
 

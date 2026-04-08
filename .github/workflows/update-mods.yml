@@ -42,6 +42,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add profiles/*/mods_cache.yml profiles/*/uploads_index.yml
+          git add Dev-Profile/*/mods_cache.yml Dev-Profile/*/uploads_index.yml
           git diff --cached --quiet || git commit -m "chore: update mod caches and upload indexes [skip ci]"
           git push

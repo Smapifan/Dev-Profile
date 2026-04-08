@@ -59,11 +59,16 @@ jobs:
             const bio          = extractField('Bio').replace(/^_No response_$/i, '');
             const skills       = extractField('Skills').replace(/^_No response_$/i, '');
             const socialsRaw   = extractField('Platform Links').replace(/^_No response_$/i, '');
-            const language     = extractField('Preferred Language') || 'en';
+            const language     = extractField('Preferred Language').replace(/^_No response_$/i, '') || 'en';
 
             // Validate username
             if (!/^[a-zA-Z0-9_-]{1,40}$/.test(username)) {
               core.setFailed(`Invalid username: "${username}". Use only letters, numbers, hyphens and underscores (max 40 chars).`);
+              return;
+            }
+            // Validate display name
+            if (!displayName) {
+              core.setFailed('Display Name is required.');
               return;
             }
 
@@ -182,4 +187,33 @@ jobs:
               issue_number: context.issue.number,
               state: 'closed',
               state_reason: 'completed',
+            });
+
+      - name: Comment on issue if workflow failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '❌ **Profile submission failed.**',
+                '',
+                'The automated profile creation could not complete. Common reasons:',
+                '- **Invalid username** — username must only contain letters, numbers, hyphens, and underscores (max 40 chars).',
+                '- **Username already taken** — a profile with this username already exists.',
+                '- **Missing required fields** — Username and Display Name are required.',
+                '',
+                'Please close this issue and open a new one with corrected information.',
+                'If you believe this is a mistake, please contact a maintainer.',
+              ].join('\n'),
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed',
+              state_reason: 'not_planned',
             });

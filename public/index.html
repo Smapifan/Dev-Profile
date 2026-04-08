@@ -1422,7 +1422,7 @@ async function submitPR() {
 
   const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
   const username    = generatedData.username;
-  const issueTitle  = `[Profil Submission] ${username}`;
+  const issueTitle  = `[Profile Submission] ${username}`;
 
   // Base64-encode the YAML to protect profile data and prevent special-character
   // issues that can cause HTTP 422 errors when creating the issue via the API.

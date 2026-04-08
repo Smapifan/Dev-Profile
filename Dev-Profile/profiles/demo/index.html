@@ -230,6 +230,9 @@
     /* ── Last updated ────────────────────────────────────────────── */
     .last-updated { color: var(--text-muted); font-size: 0.78rem; }
 
+    /* ── Section anchors (invisible, offset for sticky header) ──── */
+    .section-anchor { visibility: hidden; height: 0; margin-top: -68px; padding-top: 68px; }
+
     /* ── Footer ──────────────────────────────────────────────────── */
     footer {
       text-align: center; padding: 28px 20px;
@@ -282,6 +285,7 @@
 
   <!-- Socials -->
   <div class="section" id="section-socials" style="display:none">
+    <div id="section-socials-anchor" class="section-anchor"></div>
     <div class="section-header" id="label-socials">Social Links</div>
     <div class="section-body">
       <ul class="socials-list" id="socials-list"></ul>
@@ -290,6 +294,7 @@
 
   <!-- Projects -->
   <div class="section" id="section-projects" style="display:none">
+    <div id="section-projects-anchor" class="section-anchor"></div>
     <div class="section-header" id="label-projects">Projects</div>
     <div class="section-body">
       <div class="tags" id="projects-list"></div>
@@ -298,6 +303,7 @@
 
   <!-- Mods -->
   <div class="section">
+    <div id="section-mods-anchor" class="section-anchor"></div>
     <div class="section-header">
       <span id="label-mods">Mods</span>
       <span class="last-updated" id="mods-updated"></span>
@@ -311,6 +317,7 @@
 
   <!-- Uploads -->
   <div class="section">
+    <div id="section-uploads-anchor" class="section-anchor"></div>
     <div class="section-header" id="label-uploads">Uploads</div>
     <div class="section-body">
       <ul class="upload-list" id="upload-list">
@@ -321,6 +328,7 @@
 
   <!-- Edit Profile -->
   <div class="section">
+    <div id="section-edit-anchor" class="section-anchor"></div>
     <div class="section-header" id="label-edit-header">Edit Profile</div>
     <div class="section-body">
       <div class="edit-toggle-row">
@@ -692,6 +700,42 @@ async function submitEdit() {
   }
 }
 
+// ── URL helpers ───────────────────────────────────────────────────────────────
+
+/**
+ * Derive the profile username from the current URL.
+ * Works for both the canonical path:
+ *   /Dev-Profile/{username}/
+ * and the legacy path inside the repo:
+ *   /Dev-Profile/Dev-Profile/profiles/{username}/
+ */
+function usernameFromPath() {
+  const parts = window.location.pathname.replace(/\/$/, '').split('/').filter(Boolean);
+  // Last non-empty segment is the username (or a tab name)
+  // We only want the username segment – look for the segment after 'profiles' or
+  // after the base 'Dev-Profile' when there is no 'profiles' level.
+  const profIdx = parts.lastIndexOf('profiles');
+  if (profIdx !== -1 && parts[profIdx + 1]) return parts[profIdx + 1];
+  // Fallback: the first segment after the GitHub Pages base
+  const baseIdx = parts.indexOf('Dev-Profile');
+  if (baseIdx !== -1 && parts[baseIdx + 1] && parts[baseIdx + 1] !== 'profiles') {
+    return parts[baseIdx + 1];
+  }
+  return parts[parts.length - 1] || 'demo';
+}
+
+/**
+ * Rewrite the browser URL to the clean form  /Dev-Profile/{username}[/{tab}]
+ * so that bookmarks and shared links look nice.
+ */
+function rewriteCleanUrl(username, tab) {
+  const base = '/Dev-Profile';
+  const clean = base + '/' + encodeURIComponent(username) + (tab ? '/' + encodeURIComponent(tab) : '');
+  try {
+    window.history.replaceState(null, '', clean);
+  } catch (_) { /* sandboxed – ignore */ }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
   applyTheme(currentTheme());
@@ -710,6 +754,40 @@ async function init() {
   renderProfile(profile);
   renderMods(modsCache);
   renderUploads(uploadsIndex);
+
+  /* Rewrite URL to clean form and activate tab from URL hash */
+  const username = (profile && profile.username) || usernameFromPath();
+  const hash     = window.location.hash.replace(/^#/, '').toLowerCase();
+  rewriteCleanUrl(username, hash || null);
+  if (hash) activateTab(hash);
+}
+
+/**
+ * Activate a named tab/section.
+ * Supported values: 'socials', 'projects', 'mods', 'uploads', 'edit',
+ *                   'nexus' (alias for mods), 'curseforge' (alias for mods).
+ */
+function activateTab(tab) {
+  const map = {
+    nexus:      'section-mods-anchor',
+    curseforge: 'section-mods-anchor',
+    mods:       'section-mods-anchor',
+    uploads:    'section-uploads-anchor',
+    edit:       'section-edit-anchor',
+    socials:    'section-socials-anchor',
+    projects:   'section-projects-anchor',
+  };
+  const anchorId = map[tab];
+  if (!anchorId) return;
+  // Scroll to the section anchor if it exists, otherwise open the edit form
+  const el = document.getElementById(anchorId);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  if (tab === 'edit') {
+    const form = document.getElementById('edit-form');
+    if (form && !form.classList.contains('open')) toggleEditForm();
+  }
 }
 
 init();

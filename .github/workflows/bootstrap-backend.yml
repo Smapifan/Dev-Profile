@@ -1,0 +1,73 @@
+name: Bootstrap Backend Repository
+
+# One-shot manual workflow that pushes the necessary GitHub Actions workflow
+# and helper script into the Smapifan/Backend repository so it can process
+# profile-submission issues automatically.
+#
+# Run this once (or re-run after updating the backend-setup files).
+#
+# Required secret in THIS (Dev-Profile) repository:
+#   BACKEND_PAT  – personal-access-token with `repo` scope on Smapifan/Backend
+#
+# What is created / updated in Smapifan/Backend:
+#   .github/workflows/handle-profile-issue.yml
+#   .github/scripts/handle_issue.js
+#   profiles.yml           (only if it doesn't exist yet)
+#   Dev-Profile/.gitkeep   (ensures the directory is tracked)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Dev-Profile (source of setup files)
+        uses: actions/checkout@v4
+
+      - name: Clone Backend repository
+        env:
+          BACKEND_PAT: ${{ secrets.BACKEND_PAT }}
+        run: |
+          git clone "https://x-access-token:${BACKEND_PAT}@github.com/Smapifan/Backend.git" /tmp/backend
+          echo "Backend cloned."
+
+      - name: Create directory structure in Backend
+        run: |
+          mkdir -p /tmp/backend/.github/workflows
+          mkdir -p /tmp/backend/.github/scripts
+          mkdir -p /tmp/backend/Dev-Profile
+
+          # Ensure the Dev-Profile directory is tracked even when empty
+          touch /tmp/backend/Dev-Profile/.gitkeep
+
+          # Create an initial profiles.yml registry if one doesn't exist
+          if [ ! -f /tmp/backend/profiles.yml ]; then
+            printf 'profiles: []\n' > /tmp/backend/profiles.yml
+          fi
+
+      - name: Copy workflow and script files
+        run: |
+          cp .github/backend-setup/handle-profile-issue.yml \
+             /tmp/backend/.github/workflows/handle-profile-issue.yml
+
+          cp .github/backend-setup/handle_issue.js \
+             /tmp/backend/.github/scripts/handle_issue.js
+
+      - name: Commit and push to Backend
+        env:
+          BACKEND_PAT: ${{ secrets.BACKEND_PAT }}
+        run: |
+          cd /tmp/backend
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          if git diff --cached --quiet; then
+            echo "Backend is already up to date – nothing to commit."
+          else
+            git commit -m "chore: bootstrap GitHub Actions workflows from Dev-Profile"
+            git push "https://x-access-token:${BACKEND_PAT}@github.com/Smapifan/Backend.git" main
+            echo "✔ Bootstrap complete."
+          fi

@@ -1207,7 +1207,7 @@ function renderProfiles(profiles) {
       </a>`;
     }).join('')}</div>` : '';
 
-    return `<a class="profile-card" href="Dev-Profile/profiles/${esc(username)}/index.html" title="${esc(name)}">
+    return `<a class="profile-card" href="${esc(username)}/" title="${esc(name)}">
       <div class="card-top">
         <div class="avatar">${esc(initial)}</div>
         <div>
@@ -1440,6 +1440,19 @@ async function init() {
     applyI18n();
     renderProfiles(allProfiles);
   });
+
+  /* SPA routing – handle redirects from 404.html and /create/index.html */
+  const spaPath = new URLSearchParams(window.location.search).get('spa_path');
+  if (spaPath === '/create') {
+    /* Rewrite the browser URL to the clean /create path */
+    const cleanUrl = window.location.origin + '/Dev-Profile/create';
+    window.history.replaceState(null, '', cleanUrl);
+    /* profiles still needed so the username-taken check works */
+    const list = await loadProfiles();
+    allProfiles = await enrichProfiles(list);
+    openCreateModal();
+    return;
+  }
 
   /* profiles */
   renderSkeletons();

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Profiles</title>
+  <style>
+    body { background: #0d1117; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  </style>
+</head>
+<body>
+<script>
+  /*
+   * GitHub Pages SPA routing – 404.html
+   *
+   * When GitHub Pages can't find a file it serves this 404.html.
+   * We decode the requested path and redirect to the root index.html,
+   * preserving the intended route so the SPA can render the right view.
+   *
+   * Handled routes (relative to the GitHub Pages base /Dev-Profile):
+   *   /create            → open Create-Profile modal
+   *   /{username}        → render that user's profile
+   *   /{username}/Nexus  → render profile with the Nexus Mods tab active
+   *   /{username}/Edit   → render profile with the Edit tab active
+   *   /{username}/*      → render profile with that tab active
+   */
+  (function () {
+    var base   = '/Dev-Profile';
+    var origin = window.location.origin;
+
+    // Strip base prefix to get the logical route
+    var route = window.location.pathname;
+    if (route.indexOf(base) === 0) route = route.slice(base.length) || '/';
+    route = route.replace(/^\/+/, ''); // strip leading slashes → 'Smapifan' or 'Smapifan/Nexus'
+
+    // Ignore asset files (e.g. .yml, .json, .png) – don't redirect these
+    if (/\.[a-zA-Z0-9]{1,8}$/.test(route)) {
+      document.body.innerHTML = '<p style="color:#8b949e">Not found.</p>';
+      return;
+    }
+
+    var parts    = route.split('/').filter(Boolean);
+    var username = parts[0] || '';
+    var tab      = (parts[1] || '').toLowerCase();
+
+    // /create  →  home page with create modal open
+    if (username === 'create') {
+      window.location.replace(origin + base + '/?spa_path=%2Fcreate');
+      return;
+    }
+
+    // Validate username characters before redirecting
+    if (!/^[a-zA-Z0-9_-]{1,40}$/.test(username)) {
+      window.location.replace(origin + base + '/');
+      return;
+    }
+
+    // /{username}  or  /{username}/{tab}
+    // Redirect to the real profile HTML page.
+    // The profile page will rewrite its own URL back to the clean form.
+    var profileUrl = origin + base + '/Dev-Profile/profiles/' + encodeURIComponent(username) + '/index.html';
+    if (tab) profileUrl += '#' + encodeURIComponent(tab);
+    window.location.replace(profileUrl);
+  })();
+</script>
+</body>
+</html>

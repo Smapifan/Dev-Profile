@@ -23,8 +23,10 @@ const BACKEND_REGISTRY = path.join(BACKEND_ROOT, 'profiles.yml');
 
 const LOCAL_ROOT     = path.resolve(__dirname, '../..');
 const LOCAL_DATA     = path.join(LOCAL_ROOT, 'Dev-Profile');
+const LOCAL_PROFILES = path.join(LOCAL_DATA, 'profiles');
 const LOCAL_REGISTRY = path.join(LOCAL_ROOT, 'profiles.yml');
-const DEMO_HTML      = path.join(LOCAL_DATA, 'demo', 'index.html');
+// Demo template is in Dev-Profile/profiles/demo/ (not Dev-Profile/demo/)
+const DEMO_HTML      = path.join(LOCAL_PROFILES, 'demo', 'index.html');
 
 const YAML_FILES = ['profile.yml', 'mods.yml', 'mods_cache.yml', 'uploads_index.yml'];
 
@@ -50,7 +52,8 @@ for (const username of entries) {
   if (username === 'demo') continue; // demo profile is managed locally
 
   const srcDir  = path.join(BACKEND_DATA, username);
-  const destDir = path.join(LOCAL_DATA, username);
+  // Profiles live in Dev-Profile/profiles/{username}/ locally
+  const destDir = path.join(LOCAL_PROFILES, username);
 
   if (!fs.statSync(srcDir).isDirectory()) continue;
 
@@ -72,7 +75,7 @@ for (const username of entries) {
     if (fs.existsSync(DEMO_HTML)) {
       const html = fs.readFileSync(DEMO_HTML, 'utf8')
         // username is validated to [a-zA-Z0-9_-] – safe to interpolate
-        .replace(/Dev-Profile\/demo\//g, `Dev-Profile/${username}/`);
+        .replace(/Dev-Profile\/profiles\/demo\//g, `Dev-Profile/profiles/${username}/`);
       fs.writeFileSync(destHtml, html, 'utf8');
       console.log(`✔ Created index.html for profile "${username}"`);
     } else {

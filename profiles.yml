@@ -2,3 +2,6 @@ profiles:
   - username: demo
     name: Demo Developer
     language: en
+  - username: D
+    name: 'Y'
+    language: de

@@ -1,0 +1,83 @@
+name: New Profile
+description: Register your developer profile on Dev-Profile
+title: "[New Profile] <username>"
+labels:
+  - new-profile
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill out the form below to create your Dev-Profile.
+        **Username** and **Display Name** are required. All other fields are optional.
+
+  - type: input
+    id: username
+    attributes:
+      label: Username
+      description: Your unique profile handle (letters, numbers, hyphens, underscores – max 40 chars).
+      placeholder: "e.g. my-username"
+    validations:
+      required: true
+
+  - type: input
+    id: name
+    attributes:
+      label: Display Name
+      description: Your full name or display name.
+      placeholder: "e.g. Max Mustermann"
+    validations:
+      required: true
+
+  - type: textarea
+    id: bio
+    attributes:
+      label: Bio
+      description: A short bio (optional).
+      placeholder: "Passionate modder since 2015..."
+      render: text
+
+  - type: textarea
+    id: skills
+    attributes:
+      label: Skills
+      description: Comma-separated list of skills (optional).
+      placeholder: "Skyrim SE, Python, Papyrus, Blender"
+      render: text
+
+  - type: textarea
+    id: socials
+    attributes:
+      label: Social Links
+      description: >
+        One URL per line (optional).
+        Platform is auto-detected: GitHub, NexusMods, CurseForge, Twitter, Discord, YouTube, Twitch.
+      placeholder: |
+        https://github.com/yourusername
+        https://www.nexusmods.com/users/12345
+      render: text
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      description: Your preferred display language.
+      options:
+        - en
+        - de
+        - es
+        - fr
+        - it
+        - jp
+        - cn
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: key_hash
+    attributes:
+      label: Key Hash (optional)
+      description: >
+        If you generated your own profile key client-side, paste the SHA-256 hash here (64 hex chars).
+        Leave empty to receive a server-generated key.
+      placeholder: "64-character hex string"

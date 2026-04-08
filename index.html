@@ -1115,8 +1115,8 @@ async function loadProfiles() {
 async function loadProfileDetail(username) {
   if (typeof jsyaml === 'undefined') return null;
   for (const url of [
-    `${BACKEND_RAW}/Dev-Profile/${username}/profile.yml`,
-    `Dev-Profile/${username}/profile.yml`,
+    `${BACKEND_RAW}/Dev-Profile/profiles/${username}/profile.yml`,
+    `Dev-Profile/profiles/${username}/profile.yml`,
   ]) {
     try {
       const res = await fetch(url);
@@ -1207,7 +1207,7 @@ function renderProfiles(profiles) {
       </a>`;
     }).join('')}</div>` : '';
 
-    return `<a class="profile-card" href="Dev-Profile/${esc(username)}/index.html" title="${esc(name)}">
+    return `<a class="profile-card" href="Dev-Profile/profiles/${esc(username)}/index.html" title="${esc(name)}">
       <div class="card-top">
         <div class="avatar">${esc(initial)}</div>
         <div>

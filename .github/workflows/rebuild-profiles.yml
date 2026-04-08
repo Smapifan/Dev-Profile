@@ -1,0 +1,101 @@
+name: Rebuild profiles.yml
+
+# Runs after any profile/* branch is merged into main, rebuilding the
+# profiles.yml registry from the actual directory contents.
+# This avoids merge conflicts in profile-pr.yml and profile-issue.yml
+# because those workflows no longer write profiles.yml directly.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dev-Profile/profiles/**/profile.yml'
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install js-yaml
+
+      - name: Rebuild profiles.yml
+        run: |
+          node -e "
+          'use strict';
+          const fs    = require('fs');
+          const path  = require('path');
+          const jsyaml = require('js-yaml');
+
+          const PROFILES_DIR = 'Dev-Profile/profiles';
+          const REGISTRY     = 'profiles.yml';
+
+          const entries = [];
+
+          if (!fs.existsSync(PROFILES_DIR)) {
+            console.log('No profiles directory found, nothing to do.');
+            process.exit(0);
+          }
+
+          for (const name of fs.readdirSync(PROFILES_DIR)) {
+            if (name === 'demo') continue;   // skip demo profile
+            const profileYml = path.join(PROFILES_DIR, name, 'profile.yml');
+            if (!fs.existsSync(profileYml)) continue;
+            try {
+              const data = jsyaml.load(fs.readFileSync(profileYml, 'utf8')) || {};
+              if (!data.username) continue;
+              entries.push({
+                username: String(data.username),
+                name:     String(data.name || data.username),
+                language: String(data.language || 'en'),
+              });
+            } catch (e) {
+              console.warn('Could not parse ' + profileYml + ': ' + e.message);
+            }
+          }
+
+          const existing = fs.existsSync(REGISTRY)
+            ? (jsyaml.load(fs.readFileSync(REGISTRY, 'utf8')) || {})
+            : {};
+
+          // Preserve order of existing entries and append new ones
+          const existingUsernames = (existing.profiles || []).map(p =>
+            (typeof p === 'string' ? p : p.username || '').toLowerCase()
+          );
+          const newUsernames = entries.map(e => e.username.toLowerCase());
+          const merged = (existing.profiles || [])
+            .filter(p => {
+              const u = (typeof p === 'string' ? p : p.username || '').toLowerCase();
+              return newUsernames.includes(u);
+            })
+            .map(p => {
+              const u = (typeof p === 'string' ? p : p.username || '').toLowerCase();
+              return entries.find(e => e.username.toLowerCase() === u) || p;
+            });
+          for (const e of entries) {
+            if (!existingUsernames.includes(e.username.toLowerCase())) {
+              merged.push(e);
+            }
+          }
+
+          fs.writeFileSync(REGISTRY, jsyaml.dump({ profiles: merged }, { lineWidth: 120, noRefs: true }), 'utf8');
+          console.log('Rebuilt profiles.yml with ' + merged.length + ' profile(s).');
+          "
+
+      - name: Commit updated profiles.yml
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add profiles.yml
+          git diff --cached --quiet || git commit -m "chore: rebuild profiles.yml registry"
+          git push

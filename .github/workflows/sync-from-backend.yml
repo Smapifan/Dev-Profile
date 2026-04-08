@@ -1,0 +1,58 @@
+name: Sync Profiles from Backend
+
+# Pulls the latest profile YAML data from Smapifan/Backend into this repository
+# so that GitHub Pages can serve the up-to-date profile pages.
+#
+# Triggers:
+#   1. repository_dispatch with event_type "profile-synced"
+#      (sent automatically by the Backend repo after each auto-merge)
+#   2. workflow_dispatch  – manual trigger from the Actions tab
+#   3. schedule           – daily at 03:00 UTC as a safety net
+
+on:
+  repository_dispatch:
+    types: [profile-synced]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Dev-Profile
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        run: npm install js-yaml
+
+      - name: Clone Backend repository
+        run: |
+          git clone --depth=1 https://github.com/Smapifan/Backend.git /tmp/backend
+          echo "Backend repo cloned successfully."
+
+      - name: Sync profiles from Backend
+        run: node .github/scripts/sync_from_backend.js
+
+      - name: Commit synced profiles
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Dev-Profile/ profiles.yml
+          if git diff --cached --quiet; then
+            echo "No changes to commit – Dev-Profile is already up to date."
+          else
+            git commit -m "chore: sync profiles from Backend"
+            git push origin HEAD:main
+          fi

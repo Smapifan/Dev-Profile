@@ -1092,24 +1092,39 @@ function toggleTheme() {
   applyTheme(next);
 }
 
+/* ── Backend data source ────────────────────────────────────────────────── */
+// Raw base URL for the Backend data repository.
+// Profiles are fetched from here first; the local copy (synced by the
+// sync-from-backend workflow) is used as a fallback.
+const BACKEND_RAW = 'https://raw.githubusercontent.com/Smapifan/Backend/main';
+
 /* ── Profile loading ────────────────────────────────────────────────── */
 async function loadProfiles() {
   if (typeof jsyaml === 'undefined') return [];
-  try {
-    const res = await fetch('profiles.yml');
-    if (!res.ok) throw new Error(res.status);
-    const data = jsyaml.load(await res.text()) || {};
-    return Array.isArray(data.profiles) ? data.profiles : [];
-  } catch { return []; }
+  for (const url of [`${BACKEND_RAW}/profiles.yml`, 'profiles.yml']) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const data = jsyaml.load(await res.text()) || {};
+      if (Array.isArray(data.profiles) && data.profiles.length > 0) return data.profiles;
+    } catch { /* try next source */ }
+  }
+  return [];
 }
 
 async function loadProfileDetail(username) {
   if (typeof jsyaml === 'undefined') return null;
-  try {
-    const res = await fetch(`Dev-Profile/${username}/profile.yml`);
-    if (!res.ok) return null;
-    return jsyaml.load(await res.text()) || null;
-  } catch { return null; }
+  for (const url of [
+    `${BACKEND_RAW}/Dev-Profile/${username}/profile.yml`,
+    `Dev-Profile/${username}/profile.yml`,
+  ]) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      return jsyaml.load(await res.text()) || null;
+    } catch { /* try next source */ }
+  }
+  return null;
 }
 
 async function enrichProfiles(list) {
@@ -1327,7 +1342,7 @@ function openGitHubIssue() {
   const binaryStr = Array.from(yamlBytes, b => String.fromCharCode(b)).join('');
   const issueBody = '<!-- profile-yaml-b64 -->\n' + btoa(binaryStr);
 
-  const issueUrl = 'https://github.com/Smapifan/Dev-Profile/issues/new'
+  const issueUrl = 'https://github.com/Smapifan/Backend/issues/new'
     + '?title=' + encodeURIComponent(issueTitle)
     + '&body='  + encodeURIComponent(issueBody);
 

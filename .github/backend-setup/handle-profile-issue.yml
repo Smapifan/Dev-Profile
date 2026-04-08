@@ -1,0 +1,213 @@
+name: Handle Profile Submission
+
+# Triggered when any issue is opened in this (Backend) repository.
+# Filters for issues with the "[Profile Submission]" title prefix, which are
+# created by users who clicked "Open GitHub Issue" on the Dev-Profile site.
+#
+# Flow:
+#   1. Validate & parse the base64-encoded profile YAML from the issue body.
+#   2. Create a feature branch  profile/{username}-{issue_number}
+#   3. Write the profile files and commit.
+#   4. Open a Pull Request.
+#   5. Immediately merge the PR (no review required – data is validated in step 1).
+#   6. Close the issue with a success/failure comment.
+#   7. After a successful merge, dispatch "profile-synced" to Smapifan/Dev-Profile
+#      so the static site picks up the new data right away.
+#
+# Required secrets:
+#   DEVPROFILE_PAT  – personal-access-token with `repo` scope on Smapifan/Dev-Profile
+#                     (needed only for step 7; the sync also runs on a daily schedule
+#                      so this secret is optional but recommended)
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-submission:
+    # Only process "[Profile Submission] …" issues
+    if: startsWith(github.event.issue.title, '[Profile Submission]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues:   write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Backend
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install js-yaml
+
+      # ── Parse issue body & write profile files ────────────────────────────
+      - name: Parse issue and write profile files
+        id: parse
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          OUTPUT=$(node .github/scripts/handle_issue.js 2>&1)
+          STATUS=$?
+          echo "$OUTPUT"
+          if [ $STATUS -ne 0 ]; then
+            echo "failed=true"  >> $GITHUB_OUTPUT
+            echo "error_msg<<EOF" >> $GITHUB_OUTPUT
+            echo "$OUTPUT" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Comment on failure and stop ───────────────────────────────────────
+      - name: Comment failure
+        if: steps.parse.outputs.failed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const msg = `${{ steps.parse.outputs.error_msg }}`.slice(0, 2000);
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '❌ **Profile submission failed.**',
+                '',
+                'Please fix the error below and open a new issue:',
+                '',
+                '<details><summary>Error details</summary>',
+                '',
+                '```',
+                msg,
+                '```',
+                '',
+                '</details>',
+              ].join('\n'),
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed',
+              state_reason: 'not_planned',
+            });
+
+      - name: Abort on failure
+        if: steps.parse.outputs.failed == 'true'
+        run: exit 1
+
+      # ── Create branch & commit ────────────────────────────────────────────
+      - name: Create branch and commit profile files
+        id: commit
+        run: |
+          # Derive username from the issue title "[Profile Submission] username"
+          TITLE="${{ github.event.issue.title }}"
+          USERNAME=$(echo "$TITLE" | sed 's/\[Profile Submission\] *//' | tr -cd 'a-zA-Z0-9_-' | cut -c1-40)
+          BRANCH="profile/${USERNAME}-${{ github.event.issue.number }}"
+          echo "branch=$BRANCH"   >> $GITHUB_OUTPUT
+          echo "username=$USERNAME" >> $GITHUB_OUTPUT
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add Dev-Profile/ profiles.yml
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            echo "empty=true" >> $GITHUB_OUTPUT
+          else
+            git commit -m "feat: add profile '${USERNAME}' (issue #${{ github.event.issue.number }})"
+            git push origin "$BRANCH"
+          fi
+
+      - name: Abort on empty commit
+        if: steps.commit.outputs.empty == 'true'
+        run: |
+          echo "No new files were written – profile may already exist."
+          exit 1
+
+      # ── Open Pull Request ─────────────────────────────────────────────────
+      - name: Create Pull Request
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              title: `feat: add profile '${ '${{ steps.commit.outputs.username }}' }'`,
+              head:  '${{ steps.commit.outputs.branch }}',
+              base:  'main',
+              body:  `Automated PR for profile submission from issue #${ context.issue.number }.`,
+            });
+            core.setOutput('pr_number', String(pr.number));
+            core.setOutput('pr_sha',    pr.head.sha);
+            return pr.number;
+
+      # ── Merge PR immediately ──────────────────────────────────────────────
+      - name: Merge Pull Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.pulls.merge({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              pull_number:  Number('${{ steps.pr.outputs.pr_number }}'),
+              merge_method: 'squash',
+              commit_title: `feat: add profile '${ '${{ steps.commit.outputs.username }}' }'`,
+            });
+
+      # ── Close issue with success comment ─────────────────────────────────
+      - name: Comment success and close issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const username = '${{ steps.commit.outputs.username }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '✅ **Profile submitted successfully!**',
+                '',
+                `Your profile **${username}** has been added to the Backend repository.`,
+                '',
+                'The Dev-Profile site will sync within a few minutes. Your profile will then be accessible at:',
+                '',
+                `**https://smapifan.github.io/Dev-Profile/${username}**`,
+                '',
+                '> ⚠️ **Your Profile Key** was included in the submitted YAML.',
+                '> Make sure you have saved it – it is needed to edit your profile later.',
+              ].join('\n'),
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed',
+              state_reason: 'completed',
+            });
+
+      # ── Dispatch sync to Dev-Profile ──────────────────────────────────────
+      - name: Dispatch profile-synced event to Dev-Profile
+        if: env.DEVPROFILE_PAT != ''
+        env:
+          DEVPROFILE_PAT: ${{ secrets.DEVPROFILE_PAT }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.DEVPROFILE_PAT }}
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner:      'Smapifan',
+              repo:       'Dev-Profile',
+              event_type: 'profile-synced',
+              client_payload: {
+                username: '${{ steps.commit.outputs.username }}',
+                source:   'Backend',
+              },
+            });
+            console.log('✔ Dispatched profile-synced event to Dev-Profile.');

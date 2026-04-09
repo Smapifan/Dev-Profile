@@ -76,11 +76,11 @@ create:
   add_link: "+ リンクを追加"
   remove_link: 削除
   submit_pr_title: GitHubにプロフィールを送信
-  submit_pat_hint: "GitHub Personal Access Token（public_repoスコープが必要）を入力して、ポップアップや手動確認なしでプロフィールを自動送信できます。github.com/settings/tokensでトークンを作成してください。"
+  submit_pat_hint: "下のボタンをクリックして、あらかじめ入力されたGitHub Issueを開いてください。GitHubアカウントにログインするだけです — トークン不要。"
   pat_placeholder: "ghp_…"
   pat_remember: このブラウザにトークンを記憶する
   pat_required: GitHub Personal Access Tokenを入力してください。
-  submit_pr_btn: "プロフィールを送信"
+  submit_pr_btn: "GitHub Issueを開く"
   submit_pr_sending: "送信中…"
   submit_pr_success: "プロフィールを送信しました！Issueを確認："
   submit_pr_error: "送信できませんでした。トークンを確認して再試行してください。"

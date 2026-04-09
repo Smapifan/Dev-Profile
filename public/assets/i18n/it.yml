@@ -76,11 +76,11 @@ create:
   add_link: "+ Aggiungi link"
   remove_link: Rimuovi
   submit_pr_title: Invia il Profilo a GitHub
-  submit_pat_hint: "Inserisci il tuo Personal Access Token GitHub (ambito public_repo richiesto) per inviare il profilo automaticamente — senza pop-up o conferma manuale. Crea un token su github.com/settings/tokens."
+  submit_pat_hint: "Clicca il pulsante qui sotto per aprire un Issue GitHub precompilato. Devi solo essere connesso al tuo account GitHub — nessun token richiesto."
   pat_placeholder: "ghp_…"
   pat_remember: Ricorda il token in questo browser
   pat_required: Inserisci il tuo Personal Access Token GitHub.
-  submit_pr_btn: "Invia Profilo"
+  submit_pr_btn: "Apri Issue su GitHub"
   submit_pr_sending: "Invio in corso…"
   submit_pr_success: "Profilo inviato! Vedi issue:"
   submit_pr_error: "Invio non riuscito. Controlla il token e riprova."

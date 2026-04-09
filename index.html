@@ -865,21 +865,11 @@
       <p id="success-msg"></p>
       <div id="pr-section" class="pr-trigger">
         <h4 data-i18n="create.submit_pr_title">Submit Profile to GitHub</h4>
-        <p class="form-hint" data-i18n="create.submit_pat_hint">Enter your GitHub Personal Access Token (needs <code>public_repo</code> scope) to submit your profile automatically — no pop-up or manual confirmation needed.</p>
-        <div class="form-group" style="margin:8px 0">
-          <input type="password" id="f-gh-pat" autocomplete="off" spellcheck="false"
-                 data-i18n-placeholder="create.pat_placeholder" placeholder="ghp_…"
-                 style="width:100%;margin-top:4px" />
-        </div>
-        <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--text-muted);margin-bottom:10px;cursor:pointer">
-          <input type="checkbox" id="f-pat-remember" />
-          <span data-i18n="create.pat_remember">Remember token in this browser</span>
-        </label>
+        <p class="form-hint" data-i18n="create.submit_pat_hint">Click the button below to open a pre-filled GitHub Issue. You only need to be logged into your GitHub account — no token required.</p>
         <div class="pr-trigger-row" style="justify-content:center">
-          <button class="btn btn-primary" id="btn-submit-pr" onclick="submitViaAPI()"
-                  data-i18n="create.submit_pr_btn">Submit Profile</button>
+          <button class="btn btn-primary" id="btn-submit-pr" onclick="openGitHubIssue()"
+                  data-i18n="create.submit_pr_btn">Open GitHub Issue</button>
         </div>
-        <div id="pr-status" class="pr-status" style="display:none"></div>
       </div>
       <div class="success-actions">
         <button class="btn" onclick="downloadYaml()" data-i18n="create.download_yaml">Download YAML</button>
@@ -1256,18 +1246,8 @@ function openCreateModal() {
   if (extraContainer) extraContainer.innerHTML = '';
   generatedData = null;
   /* reset PR submit section */
-  const prStatus = document.getElementById('pr-status');
-  if (prStatus) { prStatus.style.display = 'none'; prStatus.textContent = ''; prStatus.className = 'pr-status'; }
   const btnPR = document.getElementById('btn-submit-pr');
   if (btnPR) { btnPR.disabled = false; }
-  /* restore saved PAT */
-  try {
-    const saved = localStorage.getItem('dp_gh_pat');
-    const patInput = document.getElementById('f-gh-pat');
-    const rememberCb = document.getElementById('f-pat-remember');
-    if (patInput) patInput.value = saved || '';
-    if (rememberCb) rememberCb.checked = !!saved;
-  } catch {}
   document.getElementById('f-username').focus();
 }
 
@@ -1339,89 +1319,22 @@ async function handleCreate() {
   ss.classList.add('open');
   document.getElementById('success-msg').textContent = t('create.success_message', { username });
 
-  const prStatus = document.getElementById('pr-status');
-  if (prStatus) { prStatus.style.display = 'none'; prStatus.textContent = ''; prStatus.className = 'pr-status'; }
   const btnPR = document.getElementById('btn-submit-pr');
-  if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
+  if (btnPR) { btnPR.disabled = false; }
 }
 
-async function submitViaAPI() {
+function openGitHubIssue() {
   if (!generatedData) return;
-  const btnPR    = document.getElementById('btn-submit-pr');
-  const status   = document.getElementById('pr-status');
-  const patInput = document.getElementById('f-gh-pat');
-  const rememberCb = document.getElementById('f-pat-remember');
-
-  const pat = (patInput?.value || '').trim();
-  if (!pat) {
-    if (status) {
-      status.textContent = t('create.pat_required') || 'Please enter your GitHub Personal Access Token.';
-      status.className = 'pr-status pr-status-err';
-      status.style.display = '';
-    }
-    return;
-  }
-
-  // Persist (or clear) the token according to the checkbox
-  try {
-    if (rememberCb?.checked) { localStorage.setItem('dp_gh_pat', pat); }
-    else { localStorage.removeItem('dp_gh_pat'); }
-  } catch {}
-
-  if (btnPR) { btnPR.disabled = true; btnPR.textContent = t('create.submit_pr_sending') || 'Submitting…'; }
-  if (status) { status.style.display = 'none'; }
-
   const profileYaml = jsyaml.dump(generatedData, { lineWidth: 120 });
   const username    = generatedData.username;
   const issueTitle  = `[Profile Submission] ${username}`;
   const yamlBytes   = new TextEncoder().encode(profileYaml);
   const binaryStr   = Array.from(yamlBytes, b => String.fromCharCode(b)).join('');
   const issueBody   = '<!-- profile-yaml-b64 -->\n' + btoa(binaryStr);
-
-  try {
-    const resp = await fetch('https://api.github.com/repos/Smapifan/Backend/issues', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${pat}`,
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title: issueTitle, body: issueBody }),
-    });
-
-    if (resp.ok) {
-      const issue = await resp.json();
-      if (status) {
-        const link = document.createElement('a');
-        link.href = issue.html_url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = `#${issue.number}`;
-        status.textContent = `✅ ${t('create.submit_pr_success') || 'Profile submitted!'} `;
-        status.appendChild(link);
-        status.className = 'pr-status pr-status-ok';
-        status.style.display = '';
-      }
-      if (btnPR) { btnPR.disabled = true; }
-    } else {
-      const err = await resp.json().catch(() => ({}));
-      const msg = err.message || `HTTP ${resp.status}`;
-      if (status) {
-        status.textContent = `❌ ${t('create.submit_pr_error') || 'Could not submit.'} (${msg})`;
-        status.className = 'pr-status pr-status-err';
-        status.style.display = '';
-      }
-      if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
-    }
-  } catch (e) {
-    if (status) {
-      status.textContent = `❌ ${t('create.submit_pr_error') || 'Network error.'} (${e.message})`;
-      status.className = 'pr-status pr-status-err';
-      status.style.display = '';
-    }
-    if (btnPR) { btnPR.disabled = false; btnPR.textContent = t('create.submit_pr_btn'); }
-  }
+  const url = 'https://github.com/Smapifan/Backend/issues/new'
+    + '?title=' + encodeURIComponent(issueTitle)
+    + '&body='  + encodeURIComponent(issueBody);
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 const DOWNLOAD_DELAY_MS = 350;

@@ -76,11 +76,11 @@ create:
   add_link: "+ 添加链接"
   remove_link: 删除
   submit_pr_title: 将资料提交到 GitHub
-  submit_pat_hint: "输入您的 GitHub Personal Access Token（需要 public_repo 权限）即可自动提交资料——无需弹出窗口或手动确认。在 github.com/settings/tokens 创建令牌。"
+  submit_pat_hint: "点击下方按钮打开预填好的 GitHub Issue。您只需登录 GitHub 账户即可 — 无需令牌。"
   pat_placeholder: "ghp_…"
   pat_remember: 在此浏览器中记住令牌
   pat_required: 请输入您的 GitHub Personal Access Token。
-  submit_pr_btn: "提交资料"
+  submit_pr_btn: "打开 GitHub Issue"
   submit_pr_sending: "提交中…"
   submit_pr_success: "资料已提交！查看 Issue："
   submit_pr_error: "提交失败，请检查令牌后重试。"

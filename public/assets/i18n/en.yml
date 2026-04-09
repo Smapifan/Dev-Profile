@@ -76,11 +76,11 @@ create:
   add_link: "+ Add Link"
   remove_link: Remove
   submit_pr_title: Submit Profile to GitHub
-  submit_pat_hint: "Enter your GitHub Personal Access Token (needs public_repo scope) to submit your profile automatically — no pop-up or manual confirmation needed. Create a token at github.com/settings/tokens."
+  submit_pat_hint: "Click the button below to open a pre-filled GitHub Issue. You only need to be logged into your GitHub account — no token required."
   pat_placeholder: "ghp_…"
   pat_remember: Remember token in this browser
   pat_required: Please enter your GitHub Personal Access Token.
-  submit_pr_btn: "Submit Profile"
+  submit_pr_btn: "Open GitHub Issue"
   submit_pr_sending: "Submitting…"
   submit_pr_success: "Profile submitted! View issue:"
   submit_pr_error: "Could not submit. Please check your token and try again."

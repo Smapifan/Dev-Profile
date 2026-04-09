@@ -84,7 +84,7 @@ jobs:
 
       # ── Commit if anything changed ──────────────────────────────────────────
       - name: Commit removed files
-        if: steps.remove.outputs.removed_count != '0'
+        if: steps.remove.outputs.removed_count != 0
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -99,5 +99,5 @@ jobs:
           fi
 
       - name: No changes
-        if: steps.remove.outputs.removed_count == '0'
+        if: steps.remove.outputs.removed_count == 0
         run: echo "✔ Repository is already clean – nothing to remove."

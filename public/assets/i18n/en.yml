@@ -75,13 +75,15 @@ create:
   field_link_placeholder: "https://example.com/yourprofile"
   add_link: "+ Add Link"
   remove_link: Remove
-  submit_pr_title: Submit Profile via GitHub Issue
-  submit_pat_hint: "Click the button to open a pre-filled GitHub Issue in your browser. Log in with your GitHub account and click \"Submit new issue\" — GitHub Actions takes care of the rest. No token required."
-  submit_pr_btn: "Open GitHub Issue"
-  submit_pr_success: "✅ GitHub opened in a new tab. Submit the issue to trigger the workflow."
-  submit_pr_popup_blocked: "Pop-up blocked. "
-  submit_pr_open_link: "Open GitHub Issue"
-  submit_pr_error: "Could not open GitHub. Please try again."
+  submit_pr_title: Submit Profile to GitHub
+  submit_pat_hint: "Enter your GitHub Personal Access Token (needs public_repo scope) to submit your profile automatically — no pop-up or manual confirmation needed. Create a token at github.com/settings/tokens."
+  pat_placeholder: "ghp_…"
+  pat_remember: Remember token in this browser
+  pat_required: Please enter your GitHub Personal Access Token.
+  submit_pr_btn: "Submit Profile"
+  submit_pr_sending: "Submitting…"
+  submit_pr_success: "Profile submitted! View issue:"
+  submit_pr_error: "Could not submit. Please check your token and try again."
   error_invalid_url: "Please enter a valid URL (must start with https://)."
   error_github_url: "Enter a valid GitHub profile URL (e.g. https://github.com/username)"
   error_nexusmods_url: "Enter a valid Nexus Mods profile URL (e.g. https://www.nexusmods.com/users/12345)"

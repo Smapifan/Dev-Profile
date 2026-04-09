@@ -1,0 +1,103 @@
+name: Cleanup Unnecessary Files
+
+# Removes leftover build artefacts, editor files, OS junk, and temporary files
+# from the repository automatically.
+#
+# Triggers:
+#   1. Push to main (immediate cleanup after each change)
+#   2. Daily schedule at 02:00 UTC (safety net)
+#   3. Manual workflow_dispatch
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Remove unwanted files ───────────────────────────────────────────────
+      - name: Delete unnecessary files
+        id: remove
+        run: |
+          set -euo pipefail
+
+          REMOVED=0
+
+          # Helper: delete a path and count it
+          remove_path() {
+            if [ -e "$1" ] || [ -L "$1" ]; then
+              rm -rf -- "$1"
+              echo "  removed: $1"
+              REMOVED=$((REMOVED + 1))
+            fi
+          }
+
+          echo "=== Scanning for unnecessary files ==="
+
+          # Log files
+          while IFS= read -r -d '' f; do
+            remove_path "$f"
+          done < <(find . -not -path './.git/*' -name '*.log' -print0)
+
+          # Temporary files
+          while IFS= read -r -d '' f; do
+            remove_path "$f"
+          done < <(find . -not -path './.git/*' -name '*.tmp' -print0)
+
+          # Backup files (*~ and *.bak)
+          while IFS= read -r -d '' f; do
+            remove_path "$f"
+          done < <(find . -not -path './.git/*' \( -name '*~' -o -name '*.bak' \) -print0)
+
+          # macOS/OS junk
+          while IFS= read -r -d '' f; do
+            remove_path "$f"
+          done < <(find . -not -path './.git/*' -name '.DS_Store' -print0)
+
+          # Windows thumbnail cache
+          while IFS= read -r -d '' f; do
+            remove_path "$f"
+          done < <(find . -not -path './.git/*' -name 'Thumbs.db' -print0)
+
+          # Temporary directories (top-level tmp/ only – avoid false positives in subdirs)
+          remove_path "./tmp"
+
+          # VS Code settings directory (top-level only)
+          remove_path "./.vscode"
+
+          # node_modules (should never be committed, but clean up if present)
+          # Only remove top-level node_modules to avoid touching profile uploads
+          remove_path "./node_modules"
+
+          echo "=== Scan complete: ${REMOVED} item(s) removed ==="
+          echo "removed_count=$REMOVED" >> "$GITHUB_OUTPUT"
+
+      # ── Commit if anything changed ──────────────────────────────────────────
+      - name: Commit removed files
+        if: steps.remove.outputs.removed_count != 0
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing staged – all removed items were already untracked."
+          else
+            git commit -m "chore: remove unnecessary files [skip ci]"
+            git push origin HEAD:main
+            echo "✔ Cleanup committed."
+          fi
+
+      - name: No changes
+        if: steps.remove.outputs.removed_count == 0
+        run: echo "✔ Repository is already clean – nothing to remove."

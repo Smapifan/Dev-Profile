@@ -1,0 +1,117 @@
+name: Notify Backend
+
+# Automatically creates an issue in Smapifan/Backend when:
+#   1. A profile is added or changed on main (push)
+#   2. A new release is published in Dev-Profile
+#   3. Daily at 04:00 UTC (sync-health check)
+#
+# Required secret in THIS (Dev-Profile) repository:
+#   BACKEND_PAT  – personal-access-token with `repo` scope on Smapifan/Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dev-Profile/profiles/**/profile.yml'
+      - 'profiles.yml'
+  release:
+    types: [published]
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  create-backend-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Dev-Profile
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # ── Determine what changed ──────────────────────────────────────────────
+      - name: Collect changed profiles
+        id: changes
+        run: |
+          # Detect changed profile.yml files compared to the previous commit
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'Dev-Profile/profiles/**/profile.yml' 2>/dev/null || true)
+          if [ -z "$CHANGED" ]; then
+            CHANGED="(none – scheduled / release trigger)"
+          fi
+          # Escape for multiline GITHUB_OUTPUT
+          {
+            echo "files<<EOF"
+            echo "$CHANGED"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          # Summarise how many profiles exist overall
+          TOTAL=$(find Dev-Profile/profiles -maxdepth 1 -mindepth 1 -type d ! -name demo | wc -l || echo 0)
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+
+      # ── Create issue in Backend ─────────────────────────────────────────────
+      - name: Create issue in Backend repository
+        env:
+          BACKEND_PAT: ${{ secrets.BACKEND_PAT }}
+          EVENT_NAME:  ${{ github.event_name }}
+          RUN_ID:      ${{ github.run_id }}
+          SHA:         ${{ github.sha }}
+          CHANGED:     ${{ steps.changes.outputs.files }}
+          TOTAL:       ${{ steps.changes.outputs.total }}
+          REPO:        ${{ github.repository }}
+          REF:         ${{ github.ref_name }}
+        run: |
+          # Build a dynamic title depending on what triggered the workflow
+          case "$EVENT_NAME" in
+            push)
+              TITLE="[Dev-Profile Sync] Profile update on main ($(date -u +%Y-%m-%d))"
+              ;;
+            release)
+              TITLE="[Dev-Profile Release] New release published: $REF"
+              ;;
+            schedule)
+              TITLE="[Dev-Profile Health] Daily sync check ($(date -u +%Y-%m-%d))"
+              ;;
+            *)
+              TITLE="[Dev-Profile Notify] Manual dispatch ($(date -u +%Y-%m-%d %H:%M UTC))"
+              ;;
+          esac
+
+          BODY=$(cat <<ISSUE_BODY
+          ## Automated notification from Dev-Profile
+
+          | Field | Value |
+          |---|---|
+          | Event | \`${EVENT_NAME}\` |
+          | Branch / Tag | \`${REF}\` |
+          | Commit SHA | \`${SHA}\` |
+          | Total profiles | ${TOTAL} |
+          | Workflow run | [View run](https://github.com/${REPO}/actions/runs/${RUN_ID}) |
+
+          ### Changed profile files
+
+          \`\`\`
+          ${CHANGED}
+          \`\`\`
+
+          ---
+          *This issue was created automatically by github-actions[bot] in the Dev-Profile repository.*
+          *The Backend agent should process this notification and sync accordingly.*
+          ISSUE_BODY
+          )
+
+          curl -fsSL \
+            -X POST \
+            -H "Authorization: Bearer ${BACKEND_PAT}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/Smapifan/Backend/issues" \
+            -d "$(jq -n \
+                  --arg title "$TITLE" \
+                  --arg body  "$BODY" \
+                  '{title: $title, body: $body, labels: ["dev-profile-sync"]}')"
+
+          echo "✔ Issue created in Smapifan/Backend."

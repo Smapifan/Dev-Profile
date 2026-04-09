@@ -75,13 +75,15 @@ create:
   field_link_placeholder: "https://example.com/tuoProfilo"
   add_link: "+ Aggiungi link"
   remove_link: Rimuovi
-  submit_pr_title: Invia il Profilo tramite Issue GitHub
-  submit_pat_hint: "Clicca il pulsante per aprire un Issue GitHub precompilato nel tuo browser. Accedi con il tuo account GitHub e clicca \"Invia nuovo issue\" — GitHub Actions si occupa del resto. Nessun token richiesto."
-  submit_pr_btn: "Apri Issue GitHub"
-  submit_pr_success: "✅ GitHub aperto in una nuova scheda. Invia l'issue per avviare il workflow."
-  submit_pr_popup_blocked: "Pop-up bloccato. "
-  submit_pr_open_link: "Apri Issue GitHub"
-  submit_pr_error: "Impossibile aprire GitHub. Per favore riprova."
+  submit_pr_title: Invia il Profilo a GitHub
+  submit_pat_hint: "Inserisci il tuo Personal Access Token GitHub (ambito public_repo richiesto) per inviare il profilo automaticamente — senza pop-up o conferma manuale. Crea un token su github.com/settings/tokens."
+  pat_placeholder: "ghp_…"
+  pat_remember: Ricorda il token in questo browser
+  pat_required: Inserisci il tuo Personal Access Token GitHub.
+  submit_pr_btn: "Invia Profilo"
+  submit_pr_sending: "Invio in corso…"
+  submit_pr_success: "Profilo inviato! Vedi issue:"
+  submit_pr_error: "Invio non riuscito. Controlla il token e riprova."
   error_invalid_url: "Inserisci un URL valido (deve iniziare con https://)."
   error_github_url: "Inserisci un URL di profilo GitHub valido (es. https://github.com/username)"
   error_nexusmods_url: "Inserisci un URL di profilo Nexus Mods valido (es. https://www.nexusmods.com/users/12345)"
